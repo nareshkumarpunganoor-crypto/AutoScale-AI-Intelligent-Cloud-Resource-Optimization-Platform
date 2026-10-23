@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoScale AI — Intelligent Cloud Resource Optimization & Auto-Scaling Platform</title>
+<meta name="description" content="AutoScale AI monitors cloud workloads in real time, predicts demand with ML, and automatically allocates compute resources for maximum efficiency and minimum cost.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%230b1122'/%3E%3Cpath d='M36 5 L15 37 h13 L26 59 L50 25 H37 Z' fill='%2322d3ee'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   AUTOSCALE AI — Design System
+   ============================================================ */
+:root{
+  --bg:#060a17;
+  --panel:#0b1124;
+  --card:#0f1730;
+  --card-2:#141f3d;
+  --card-3:#182544;
+  --border:rgba(126,156,230,.14);
+  --border-soft:rgba(126,156,230,.09);
+  --text:#e8edf9;
+  --muted:#8794b8;
+  --muted-2:#5d6a90;
+  --cyan:#22d3ee;
+  --cyan-soft:rgba(34,211,238,.12);
+  --violet:#8b5cf6;
+  --violet-soft:rgba(139,92,246,.14);
+  --indigo:#818cf8;
+  --green:#34d399;
+  --green-soft:rgba(52,211,153,.12);
+  --amber:#fbbf24;
+  --amber-soft:rgba(251,191,36,.12);
+  --red:#fb7185;
+  --red-soft:rgba(251,113,133,.12);
+  --grad:linear-gradient(135deg,#22d3ee 0%,#6366f1 55%,#8b5cf6 100%);
+  --shadow:0 22px 55px rgba(0,0,0,.4);
+  --radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(34,211,238,.3);color:#fff}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#22305c;border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:#2e4076}
+.mono{font-family:'JetBrains Mono',monospace}
+.sg{font-family:'Space Grotesk',sans-serif}
+button{font-family:'Inter',sans-serif}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:6px}
+
+/* ambient background */
+.bg-fx{position:fixed;inset:0;pointer-events:none;z-index:0}
+.bg-fx::before{content:'';position:absolute;top:-280px;right:-180px;width:720px;height:720px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.16) 0%,transparent 65%)}
+.bg-fx::after{content:'';position:absolute;bottom:-300px;left:180px;width:680px;height:680px;border-radius:50%;background:radial-gradient(circle,rgba(34,211,238,.10) 0%,transparent 65%)}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(rgba(126,156,230,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(126,156,230,.045) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,black 30%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,black 30%,transparent 75%);
+}
+
+/* ============ APP SHELL ============ */
+.app{display:flex;height:100vh;position:relative;z-index:1}
+
+/* ============ SIDEBAR ============ */
+.sidebar{
+  width:264px;flex-shrink:0;display:flex;flex-direction:column;
+  background:linear-gradient(180deg,#0c1228 0%,#0a0f21 100%);
+  border-right:1px solid var(--border-soft);
+  position:relative;z-index:40;transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+.logo-row{display:flex;align-items:center;gap:12px;padding:20px 20px 18px;border-bottom:1px solid var(--border-soft)}
+.logo-mark{width:42px;height:42px;flex-shrink:0;filter:drop-shadow(0 4px 14px rgba(34,211,238,.4))}
+.logo-name{font-family:'Space Grotesk';font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.1}
+.logo-name span{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-family:'JetBrains Mono';font-size:8.5px;letter-spacing:.22em;color:var(--muted-2);margin-top:3px}
+.sidebar-close{display:none;margin-left:auto;background:none;border:0;color:var(--muted);cursor:pointer;padding:6px}
+.nav{flex:1;overflow-y:auto;padding:18px 14px 10px;display:flex;flex-direction:column;gap:3px}
+.nav-label{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.18em;color:var(--muted-2);padding:14px 12px 7px}
+.nav-label:first-child{padding-top:2px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  padding:10px 12px;border-radius:12px;border:1px solid transparent;
+  color:#93a2c7;background:transparent;cursor:pointer;font-size:13px;font-weight:500;
+  transition:all .22s ease;position:relative;
+}
+.nav-item svg{flex-shrink:0;stroke:currentColor;transition:all .22s}
+.nav-item:hover{color:#e8edf9;background:rgba(120,160,255,.06)}
+.nav-item.active{
+  color:#7de8ff;
+  background:linear-gradient(90deg,rgba(34,211,238,.14),rgba(139,92,246,.10));
+  border-color:rgba(34,211,238,.22);
+  box-shadow:inset 0 0 30px rgba(34,211,238,.05),0 4px 18px rgba(0,0,0,.25);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:-14px;top:22%;bottom:22%;width:3px;border-radius:0 3px 3px 0;
+  background:var(--grad);box-shadow:0 0 12px rgba(34,211,238,.7);
+}
+.live-chip{margin-left:auto;font-family:'JetBrains Mono';font-size:8.5px;letter-spacing:.14em;color:#67e8f9;background:var(--cyan-soft);border:1px solid rgba(34,211,238,.35);padding:3px 7px;border-radius:6px;display:flex;align-items:center;gap:5px}
+.live-chip::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:blink 1.1s infinite}
+.nav-badge{margin-left:auto;font-family:'JetBrains Mono';font-size:10.5px;color:var(--muted);background:#18224a;border:1px solid var(--border-soft);padding:2px 8px;border-radius:99px;min-width:30px;text-align:center}
+.side-foot{padding:14px;border-top:1px solid var(--border-soft)}
+.engine-card{background:linear-gradient(150deg,#121c3e,#0e1530);border:1px solid var(--border);border-radius:14px;padding:13px 14px}
+.engine-top{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600;color:#c9f7e4}
+.engine-top.paused{color:#fde68a}
+.engine-meta{display:flex;gap:7px;font-size:10px;color:var(--muted);margin-top:8px;font-family:'JetBrains Mono'}
+.engine-meta.dim{color:var(--muted-2);margin-top:4px}
+.pulse-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:pulseDot 2s infinite;flex-shrink:0}
+.pulse-dot.amber{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+.pulse-dot.sm{width:7px;height:7px}
+@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ============ MAIN COLUMN ============ */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh}
+
+/* topbar */
+.topbar{
+  height:64px;flex-shrink:0;display:flex;align-items:center;gap:14px;padding:0 22px;
+  border-bottom:1px solid var(--border-soft);
+  background:rgba(9,13,28,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  position:relative;z-index:30;
+}
+.icon-btn{width:38px;height:38px;border-radius:11px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;position:relative}
+.icon-btn:hover{color:var(--text);background:rgba(120,160,255,.08);border-color:var(--border-soft)}
+.hamburger{display:none}
+.search{flex:1;max-width:430px;display:flex;align-items:center;gap:10px;background:#101a38;border:1px solid var(--border-soft);border-radius:12px;height:40px;padding:0 13px;transition:.25s}
+.search:focus-within{border-color:rgba(34,211,238,.4);box-shadow:0 0 0 3px rgba(34,211,238,.08)}
+.search svg{color:var(--muted-2);flex-shrink:0}
+.search input{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:13px;min-width:0}
+.search input::placeholder{color:var(--muted-2)}
+.search kbd{font-family:'JetBrains Mono';font-size:10px;color:var(--muted);background:#1a2447;border:1px solid var(--border);border-radius:6px;padding:3px 6px;flex-shrink:0}
+.topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.env-pill{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono';font-size:11px;color:#a7f3d0;background:var(--green-soft);border:1px solid rgba(52,211,153,.28);border-radius:99px;padding:7px 13px;white-space:nowrap}
+.live-pill{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.18em;color:#fca5a5;background:var(--red-soft);border:1px solid rgba(251,113,133,.3);border-radius:99px;padding:7px 12px;white-space:nowrap}
+.live-pill i{width:7px;height:7px;border-radius:50%;background:#fb7185;animation:blink .9s infinite}
+.clock{font-size:11.5px;color:var(--muted);letter-spacing:.05em;min-width:88px;text-align:center}
+.bell-wrap{position:relative}
+.alert-badge{position:absolute;top:4px;right:4px;min-width:17px;height:17px;border-radius:99px;background:linear-gradient(135deg,#fb7185,#f43f5e);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg);pointer-events:none}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:12px;color:#04121a;cursor:pointer;box-shadow:0 4px 14px rgba(139,92,246,.4);letter-spacing:.02em}
+
+/* alert dropdown */
+.alert-dropdown{
+  position:absolute;top:calc(100% + 12px);right:0;width:380px;max-width:88vw;
+  background:#101a38;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);
+  z-index:60;opacity:0;transform:translateY(-8px) scale(.98);pointer-events:none;transition:.28s;overflow:hidden;
+}
+.alert-dropdown.open{opacity:1;transform:none;pointer-events:auto}
+.dd-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border-soft);font-family:'Space Grotesk';font-weight:600;font-size:13px}
+.dd-head button{background:none;border:0;color:var(--cyan);font-size:11px;cursor:pointer;font-weight:600}
+.dd-head button:hover{text-decoration:underline}
+.dd-list{max-height:400px;overflow-y:auto}
+.alert-item{display:flex;gap:11px;padding:12px 16px;border-bottom:1px solid var(--border-soft);transition:.2s}
+.alert-item:hover{background:rgba(120,160,255,.04)}
+.alert-item:last-child{border-bottom:0}
+.alert-ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.alert-ico.warning{background:var(--amber-soft);color:var(--amber)}
+.alert-ico.info{background:var(--cyan-soft);color:var(--cyan)}
+.alert-item b{font-size:12px;display:block;font-weight:600}
+.alert-item span{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+.alert-item em{font-style:normal;font-family:'JetBrains Mono';font-size:9.5px;color:var(--muted-2);display:block;margin-top:5px}
+.dd-empty{padding:34px 16px;text-align:center;color:var(--muted-2);font-size:12px}
+
+/* ============ CONTENT ============ */
+.content{flex:1;overflow-y:auto;padding:24px 26px 30px;position:relative}
+.page{display:none}
+.page.active{display:block;animation:pageIn .45s cubic-bezier(.2,.7,.3,1)}
+@keyframes pageIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.page-title{font-family:'Space Grotesk';font-size:23px;font-weight:700;letter-spacing:-.02em}
+.page-title small{display:block;font-family:'Inter';font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0;margin-top:5px}
+.breadcrumb{font-family:'JetBrains Mono';font-size:10.5px;color:var(--muted-2);letter-spacing:.06em;margin-bottom:6px}
+.breadcrumb b{color:var(--cyan);font-weight:500}
+
+/* ============ CARDS ============ */
+.card{
+  background:linear-gradient(165deg,rgba(23,33,62,.75),rgba(14,20,40,.85));
+  border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:0 18px 45px rgba(0,0,0,.32);
+  transition:border-color .3s, transform .3s;
+}
+.card:hover{border-color:rgba(126,156,230,.22)}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 20px 0;flex-wrap:wrap}
+.card-title{font-family:'Space Grotesk';font-size:14px;font-weight:600;letter-spacing:.02em;display:flex;align-items:center;gap:10px;color:#dfe7fa}
+.card-sub{color:var(--muted-2);font-weight:500;font-size:11px}
+.title-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.title-icon.cyan{background:var(--cyan-soft);color:var(--cyan)}
+.title-icon.violet{background:var(--violet-soft);color:#b7a6ff}
+.title-icon.green{background:var(--green-soft);color:var(--green)}
+.title-icon.amber{background:var(--amber-soft);color:var(--amber)}
+.card-body{padding:16px 20px 20px}
+
+/* grid */
+.grid-12{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-bottom:16px}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}.s6{grid-column:span 6}
+.s7{grid-column:span 7}.s8{grid-column:span 8}.s12{grid-column:span 12}
+
+/* ============ KPI CARDS ============ */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.kpi{padding:18px 19px 16px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0;transition:.35s}
+.kpi:hover{transform:translateY(-3px);border-color:rgba(34,211,238,.35)}
+.kpi:hover::after{opacity:1}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.kpi-icon{width:43px;height:43px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.kpi-icon.cyan{background:var(--cyan-soft);color:var(--cyan);box-shadow:inset 0 0 18px rgba(34,211,238,.15)}
+.kpi-icon.violet{background:var(--violet-soft);color:#c4b5fd;box-shadow:inset 0 0 18px rgba(139,92,246,.2)}
+.kpi-icon.green{background:var(--green-soft);color:var(--green);box-shadow:inset 0 0 18px rgba(52,211,153,.15)}
+.kpi-icon.amber{background:var(--amber-soft);color:var(--amber);box-shadow:inset 0 0 18px rgba(251,191,36,.15)}
+.delta{font-family:'JetBrains Mono';font-size:10.5px;font-weight:600;padding:4px 9px;border-radius:8px;letter-spacing:.02em}
+.delta.good{color:#6ee7b7;background:var(--green-soft)}
+.delta.bad{color:#fda4af;background:var(--red-soft)}
+.delta.flat{color:#a7b6e3;background:#18224a}
+.kpi-label{font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.03em;text-transform:uppercase}
+.kpi-value{font-family:'Space Grotesk';font-size:29px;font-weight:700;letter-spacing:-.02em;margin:6px 0 4px;display:flex;align-items:baseline;gap:6px}
+.kpi-value .unit{font-size:13px;color:var(--muted);font-weight:500}
+.kpi-foot{font-size:10.5px;color:var(--muted-2)}
+
+/* ============ CHARTS ============ */
+.chart{width:100%}
+#chartUtilization{height:285px}
+#chartAllocation{height:190px}
+#chartGauge{height:158px}
+#simChart{height:196px}
+#forecastChart{height:325px}
+#costChart{height:295px}
+.legend-chips{display:flex;gap:14px}
+.chip{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted)}
+.chip i{width:10px;height:10px;border-radius:3px;background:var(--c,#22d3ee);box-shadow:0 0 8px var(--c,#22d3ee)}
+
+/* engine card */
+.engine-body{padding:8px 20px 18px}
+.engine-rows{border-top:1px solid var(--border-soft)}
+.engine-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--border-soft);font-size:12px}
+.engine-row:last-child{border-bottom:0}
+.engine-row span{color:var(--muted)}
+.engine-row b{font-family:'JetBrains Mono';font-weight:500;font-size:11.5px;color:#cfe6ff}
+.status-pill{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.16em;padding:4px 10px;border-radius:6px;font-weight:600}
+.status-pill.ok{color:#6ee7b7;background:var(--green-soft);border:1px solid rgba(52,211,153,.3)}
+.status-pill.paused{color:#fde68a;background:var(--amber-soft);border:1px solid rgba(251,191,36,.35)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:12.5px;border:0;border-radius:12px;padding:11px 19px;cursor:pointer;transition:all .25s;letter-spacing:.01em;text-decoration:none;white-space:nowrap}
+.btn-primary{color:#032430;background:linear-gradient(135deg,#22d3ee,#38bdf8);box-shadow:0 8px 26px rgba(34,211,238,.32)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 13px 34px rgba(34,211,238,.42)}
+.btn-violet{color:#f1eafd;background:var(--grad);box-shadow:0 8px 26px rgba(139,92,246,.36)}
+.btn-violet:hover{transform:translateY(-2px);box-shadow:0 13px 34px rgba(139,92,246,.48)}
+.btn-ghost{color:#cdd8f5;background:rgba(148,178,255,.07);border:1px solid var(--border);box-shadow:none}
+.btn-ghost:hover{background:rgba(148,178,255,.13);border-color:rgba(126,156,230,.3);color:#fff}
+.btn-danger{color:#fda4af;background:var(--red-soft);border:1px solid rgba(251,113,133,.32);box-shadow:none}
+.btn-danger:hover{background:rgba(251,113,133,.2)}
+.btn-sm{padding:8px 13px;font-size:11.5px;border-radius:10px}
+.btn-block{width:100%}
+.btn:disabled{opacity:.6;cursor:default;transform:none!important}
+.btn.applied{background:var(--green-soft);color:#6ee7b7;border:1px solid rgba(52,211,153,.35);box-shadow:none;cursor:default}
+
+/* progress bars */
+.bar{height:6px;background:#1b2447;border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#22d3ee,#818cf8,#8b5cf6);box-shadow:0 0 12px rgba(34,211,238,.45);width:0;transition:width 1.3s cubic-bezier(.2,.7,.3,1)}
+.bar.sm{height:5px;width:92px}
+.bar.amber>i{background:linear-gradient(90deg,#fbbf24,#f59e0b);box-shadow:0 0 10px rgba(251,191,36,.4)}
+
+/* services / consumers */
+.consumer{padding:11px 0;border-bottom:1px solid var(--border-soft)}
+.consumer:last-child{border-bottom:0;padding-bottom:2px}
+.consumer-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:12px}
+.consumer-top b{font-weight:600;color:#dbe4fb}
+.consumer-top span{font-family:'JetBrains Mono';font-size:10.5px;color:var(--muted)}
+
+/* health card */
+.health-hero{display:flex;align-items:center;gap:13px;padding:6px 0 14px;border-bottom:1px solid var(--border-soft);margin-bottom:13px}
+.health-ring{width:52px;height:52px;border-radius:50%;background:var(--green-soft);display:flex;align-items:center;justify-content:center;color:var(--green);box-shadow:0 0 26px rgba(52,211,153,.28);flex-shrink:0}
+.health-hero b{font-size:13.5px;display:block}
+.health-hero span{font-size:11px;color:var(--muted)}
+.health-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.health-stat{background:#101a38;border:1px solid var(--border-soft);border-radius:12px;padding:11px 12px}
+.health-stat b{font-family:'Space Grotesk';font-size:17px;display:block;letter-spacing:-.01em}
+.health-stat span{font-size:10px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.az-row{margin-top:13px;font-size:11px;color:var(--muted)}
+.az-line{display:flex;align-items:center;gap:9px;margin-top:8px}
+.az-line label{font-family:'JetBrains Mono';font-size:9.5px;width:76px;color:var(--muted-2)}
+.az-line .bar{flex:1}
+.az-line em{font-style:normal;font-family:'JetBrains Mono';font-size:9.5px;color:#9fb4e8;width:32px;text-align:right}
+
+/* events */
+.events-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 22px;padding:6px 20px 18px}
+.event-item{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--border-soft)}
+.event-item:nth-last-child(-n+2){border-bottom:0}
+.event-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.event-icon.up{background:var(--green-soft);color:var(--green)}
+.event-icon.down{background:var(--amber-soft);color:var(--amber)}
+.event-icon.predict{background:var(--violet-soft);color:#c4b5fd}
+.event-icon.info{background:var(--cyan-soft);color:var(--cyan)}
+.event-body{flex:1;min-width:0}
+.event-body b{font-size:12px;font-weight:600;display:block;color:#dde6fb}
+.event-body span{font-size:10.5px;color:var(--muted);display:block;margin-top:3px}
+.event-time{font-size:9.5px;color:var(--muted-2);white-space:nowrap;padding-top:2px}
+
+/* ============ SIMULATOR ============ */
+.sim-grid{display:grid;grid-template-columns:382px 1fr;gap:16px;align-items:start}
+.sim-control{position:sticky;top:0}
+.load-readout{text-align:center;padding:14px 0 4px}
+.load-num{font-family:'Space Grotesk';font-size:64px;font-weight:700;letter-spacing:-.04em;line-height:1;background:linear-gradient(180deg,#eafcff 20%,#38bdf8 70%,#6366f1);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.load-num .unit{font-size:26px;-webkit-text-fill-color:#4d628a}
+.load-cap{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.22em;color:var(--muted-2);text-align:center;margin-bottom:14px}
+input[type=range].slider{-webkit-appearance:none;appearance:none;width:100%;height:7px;border-radius:99px;background:linear-gradient(90deg,#22d3ee 0%,#818cf8 var(--p,34%),#1d2748 var(--p,34%));outline:0;cursor:pointer}
+input[type=range].slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#eaf6ff;border:2px solid #22d3ee;box-shadow:0 0 12px rgba(34,211,238,.6);transition:.15s;cursor:grab}
+input[type=range].slider::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range].slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#eaf6ff;border:2px solid #22d3ee;box-shadow:0 0 12px rgba(34,211,238,.6);cursor:grab}
+.slider-scale{display:flex;justify-content:space-between;font-family:'JetBrains Mono';font-size:9px;color:var(--muted-2);margin:6px 2px 16px}
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.scenario-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px 10px;background:#111b3b;border:1px solid var(--border-soft);border-radius:13px;color:#c3cfee;cursor:pointer;transition:.22s;font-size:11px;font-weight:600}
+.scenario-btn i{width:9px;height:9px;border-radius:50%;background:var(--sc,#34d399);box-shadow:0 0 9px var(--sc,#34d399)}
+.scenario-btn small{font-size:8.5px;color:var(--muted-2);font-family:'JetBrains Mono';font-weight:400;letter-spacing:.03em}
+.scenario-btn:hover{transform:translateY(-2px);border-color:rgba(126,156,230,.35);background:#152146}
+.scenario-btn.active{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 6px 22px rgba(34,211,238,.18);color:#8ceaff}
+.divider{height:1px;background:var(--border-soft);margin:17px 0}
+.sim-meta-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:5px 0}
+.sim-meta-row b{font-family:'JetBrains Mono';color:#cfe6ff;font-weight:500}
+.policy-link{display:inline-flex;align-items:center;gap:6px;color:var(--cyan);font-size:11.5px;font-weight:600;margin-top:12px;cursor:pointer;background:none;border:0;padding:0}
+.policy-link:hover{text-decoration:underline}
+
+.sim-right{display:flex;flex-direction:column;gap:16px;min-width:0}
+.fleet-head-meta{display:flex;align-items:center;gap:10px}
+.cooldown-chip{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.14em;padding:4px 10px;border-radius:6px;background:var(--green-soft);color:#6ee7b7;border:1px solid rgba(52,211,153,.3)}
+.cooldown-chip.cooling{background:var(--amber-soft);color:#fde68a;border-color:rgba(251,191,36,.35)}
+.sim-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border-soft)}
+.sim-stat{padding:13px 16px;border-right:1px solid var(--border-soft)}
+.sim-stat:last-child{border-right:0}
+.sim-stat span{font-size:9px;letter-spacing:.14em;color:var(--muted-2);text-transform:uppercase;display:block;margin-bottom:5px;font-family:'JetBrains Mono'}
+.sim-stat b{font-family:'Space Grotesk';font-size:21px;letter-spacing:-.02em}
+.sim-stat b small{font-size:11px;color:var(--muted);font-weight:500}
+.sim-stat b.warn{color:var(--amber)}
+.sim-stat b.danger{color:var(--red)}
+.pod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(94px,1fr));gap:10px;padding:15px 16px 17px;min-height:212px;align-content:start}
+.pod{background:linear-gradient(172deg,#16234c,#101838);border:1px solid rgba(125,232,255,.2);border-radius:13px;padding:9px 10px 10px;display:flex;flex-direction:column;gap:5px;position:relative;overflow:hidden;animation:podIn .45s cubic-bezier(.34,1.5,.64,1)}
+@keyframes podIn{from{opacity:0;transform:scale(.5) translateY(14px)}}
+.pod-head{display:flex;justify-content:space-between;align-items:center;color:#7de8ff}
+.pod-status{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.pod-id{font-size:8.5px;color:#8fa5d8;letter-spacing:.03em;white-space:nowrap;overflow:hidden}
+.pod-cpu{font-size:15px;font-weight:600;color:#eaf2ff}
+.pod-bar{height:3px;background:#1d2748;border-radius:99px;overflow:hidden}
+.pod-bar i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#818cf8);border-radius:99px;transition:width .8s}
+.pod.starting{border-color:rgba(34,211,238,.55)}
+.pod.starting .pod-status{background:var(--cyan);box-shadow:0 0 9px var(--cyan);animation:blink .7s infinite}
+.pod.starting::after{content:'';position:absolute;left:0;right:0;height:44px;top:0;background:linear-gradient(180deg,transparent,rgba(103,232,249,.32),transparent);animation:scan 1.15s linear infinite}
+@keyframes scan{from{transform:translateY(-70px)}to{transform:translateY(190px)}}
+.pod.stopping{opacity:.38;border-color:rgba(251,113,133,.45);filter:grayscale(.7)}
+.pod.stopping .pod-status{background:var(--red);box-shadow:0 0 8px var(--red)}
+.sim-bottom{display:grid;grid-template-columns:1.05fr 1fr;gap:16px;min-width:0}
+.sim-foot{display:flex;justify-content:space-between;align-items:center;padding:0 2px;margin-top:8px;font-size:10px;color:var(--muted-2);font-family:'JetBrains Mono'}
+
+/* console */
+.console{height:238px;overflow-y:auto;background:#04060f;border:1px solid var(--border-soft);border-radius:12px;margin:2px 16px 16px;padding:12px 13px;font-family:'JetBrains Mono';font-size:10.5px;line-height:1.8}
+.log-line{display:flex;gap:9px;white-space:nowrap}
+.log-time{color:#46537f;flex-shrink:0}
+.log-level{width:52px;flex-shrink:0;font-weight:600}
+.lvl-POLICY{color:#22d3ee}.lvl-SCALE{color:#c4b5fd}.lvl-PREDICT{color:#f0a6fc}.lvl-WARN{color:#fbbf24}.lvl-OK{color:#34d399}.lvl-INFO{color:#8b9cc9}.lvl-HEALTH{color:#55648f}.lvl-SYSTEM{color:#fb7185}
+.log-msg{color:#c2cdf2;overflow:hidden;text-overflow:ellipsis}
+
+/* ============ TABLES ============ */
+.table-tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.mini-search{display:flex;align-items:center;gap:9px;background:#101a38;border:1px solid var(--border-soft);border-radius:11px;height:38px;padding:0 12px;min-width:230px;flex:1;max-width:330px}
+.mini-search input{flex:1;background:none;border:0;outline:0;color:var(--text);font-size:12.5px;min-width:0}
+.mini-search input::placeholder{color:var(--muted-2)}
+.filter-pills{display:flex;gap:7px;flex-wrap:wrap}
+.filter-pill{padding:8px 14px;border-radius:99px;border:1px solid var(--border-soft);background:#111b3b;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:.2s}
+.filter-pill:hover{color:var(--text)}
+.filter-pill.active{background:var(--cyan-soft);border-color:rgba(34,211,238,.4);color:#8ceaff}
+.table-wrap{overflow-x:auto;border:1px solid var(--border-soft);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:880px}
+thead th{text-align:left;font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.13em;color:var(--muted-2);text-transform:uppercase;padding:12px 16px;background:#0e1734;border-bottom:1px solid var(--border)}
+tbody td{padding:11px 16px;border-bottom:1px solid var(--border-soft);font-size:12px;vertical-align:middle}
+tbody tr{transition:.2s}
+tbody tr:hover{background:rgba(120,160,255,.04)}
+tbody tr:last-child td{border-bottom:0}
+.inst-id{font-family:'JetBrains Mono';font-size:11px;color:#9fd9ff}
+.inst-service{font-weight:600;color:#dbe4fb}
+.cell-cpu{display:flex;align-items:center;gap:10px}
+.cell-cpu span{font-family:'JetBrains Mono';font-size:11px;width:38px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:99px;font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.pill::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.running{color:#6ee7b7;background:var(--green-soft)}
+.pill.starting{color:#67e8f9;background:var(--cyan-soft)}
+.pill.starting::before{animation:blink .8s infinite}
+.pill.stopping{color:#fcd34d;background:var(--amber-soft)}
+.pill.standby{color:#a5b4d4;background:rgba(148,163,216,.12)}
+.pill.cyan{color:#67e8f9;background:var(--cyan-soft)}
+.pill.violet{color:#c4b5fd;background:var(--violet-soft)}
+.pill.amber{color:#fcd34d;background:var(--amber-soft)}
+.row-term{background:none;border:0;color:var(--muted-2);cursor:pointer;padding:7px;border-radius:9px;transition:.2s;display:flex;align-items:center}
+.row-term:hover{color:var(--red);background:var(--red-soft)}
+.summary-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.sum-chip{background:#101a38;border:1px solid var(--border-soft);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px}
+.sum-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sum-chip b{font-family:'Space Grotesk';font-size:17px;display:block;letter-spacing:-.01em}
+.sum-chip span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+
+/* ============ MODAL ============ */
+.modal{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(3,6,17,.66);backdrop-filter:blur(7px);opacity:0;pointer-events:none;transition:.3s}
+.modal.open{opacity:1;pointer-events:auto}
+.modal-card{width:100%;max-width:460px;background:linear-gradient(170deg,#16203f,#101833);border:1px solid rgba(126,156,230,.28);border-radius:20px;box-shadow:var(--shadow);transform:translateY(24px) scale(.96);transition:.32s cubic-bezier(.2,.9,.3,1.1)}
+.modal.open .modal-card{transform:none}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:19px 22px 0}
+.modal-head h3{font-family:'Space Grotesk';font-size:16px}
+.modal-body{padding:18px 22px 22px}
+.field{margin-bottom:14px}
+.field label{font-size:10.5px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:7px;font-weight:600}
+.field input,.field select{width:100%;background:#101a38;border:1px solid var(--border-soft);border-radius:11px;height:41px;padding:0 13px;color:var(--text);font-size:13px;outline:0;transition:.2s;-webkit-appearance:none}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%238794b8' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center}
+.field input:focus,.field select:focus{border-color:rgba(34,211,238,.45);box-shadow:0 0 0 3px rgba(34,211,238,.09)}
+.modal-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+
+/* ============ POLICIES ============ */
+.policies-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.policy-card{display:flex;flex-direction:column}
+.policy-head{display:flex;gap:13px;align-items:flex-start;padding:18px 20px 0}
+.policy-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.policy-ico.cyan{background:var(--cyan-soft);color:var(--cyan)}.policy-ico.violet{background:var(--violet-soft);color:#c4b5fd}.policy-ico.amber{background:var(--amber-soft);color:var(--amber)}.policy-ico.red{background:var(--red-soft);color:var(--red)}
+.policy-head h3{font-family:'Space Grotesk';font-size:14.5px;letter-spacing:-.01em}
+.policy-head p{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.55}
+.policy-toggle{margin-left:auto;padding-top:3px}
+.policy-body{padding:15px 20px 18px;flex:1}
+.slider-row{margin-bottom:14px}
+.slider-row:last-child{margin-bottom:0}
+.slider-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:11px;color:var(--muted)}
+.slider-head b{font-family:'JetBrains Mono';color:#8ceaff;font-weight:500;font-size:11px}
+.policy-note{display:flex;align-items:center;gap:8px;margin-top:15px;padding:10px 12px;background:var(--cyan-soft);border:1px solid rgba(34,211,238,.22);border-radius:11px;font-size:10.5px;color:#8ceaff}
+.cron-chip{display:flex;justify-content:space-between;align-items:center;background:#101a38;border:1px solid var(--border-soft);border-radius:10px;padding:9px 12px;margin-bottom:9px;font-size:11px}
+.cron-chip code{font-family:'JetBrains Mono';font-size:10.5px;color:#fcd34d}
+.cron-chip span{color:var(--muted)}
+.order-flow{display:flex;align-items:center;gap:0;overflow-x:auto;padding:14px 20px 18px}
+.flow-step{flex:1;min-width:150px;text-align:center;background:#111b3b;border:1px solid var(--border);border-radius:13px;padding:13px 10px}
+.flow-step.on{border-color:rgba(34,211,238,.4);box-shadow:0 0 20px rgba(34,211,238,.1)}
+.flow-step b{font-size:11.5px;display:block}
+.flow-step span{font-size:9.5px;color:var(--muted);font-family:'JetBrains Mono';display:block;margin-top:5px}
+.flow-arrow{color:var(--muted-2);padding:0 9px;flex-shrink:0}
+.policy-disabled{opacity:.55}
+
+/* switch */
+.switch{position:relative;display:inline-block;width:43px;height:23px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.track{position:absolute;inset:0;background:#1d2748;border:1px solid var(--border);border-radius:99px;transition:.3s;cursor:pointer}
+.track::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#8fa1cf;transition:.3s}
+.switch input:checked + .track{background:rgba(34,211,238,.22);border-color:rgba(34,211,238,.5)}
+.switch input:checked + .track::after{transform:translateX(20px);background:#22d3ee;box-shadow:0 0 11px rgba(34,211,238,.75)}
+
+/* ============ COSTS ============ */
+.cost-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.cost-kpi{padding:17px 19px}
+.cost-kpi span{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);font-family:'JetBrains Mono'}
+.cost-kpi b{font-family:'Space Grotesk';font-size:24px;letter-spacing:-.02em;display:block;margin:8px 0 5px}
+.cost-kpi small{font-size:10.5px;color:var(--green)}
+.cost-kpi small.neg{color:var(--muted)}
+.save-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border-soft)}
+.save-row:last-child{border-bottom:0}
+.save-ico{width:38px;height:38px;border-radius:10px;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Space Grotesk';font-weight:700;font-size:12px}
+.save-row .bar{margin-top:6px}
+.save-row b{font-size:12px;display:flex;justify-content:space-between;gap:10px}
+.save-row span{font-size:10.5px;color:var(--muted)}
+.rec-item{display:flex;align-items:center;gap:15px;padding:15px 20px;border-bottom:1px solid var(--border-soft);transition:.2s}
+.rec-item:last-child{border-bottom:0}
+.rec-item:hover{background:rgba(120,160,255,.03)}
+.rec-ico{width:44px;height:44px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.rec-ico.cyan{background:var(--cyan-soft);color:var(--cyan)}.rec-ico.violet{background:var(--violet-soft);color:#c4b5fd}.rec-ico.amber{background:var(--amber-soft);color:var(--amber)}
+.rec-body{flex:1;min-width:0}
+.rec-body b{font-size:12.5px;display:block}
+.rec-body span{font-size:11px;color:var(--muted);display:block;margin-top:3px}
+.rec-save{font-family:'Space Grotesk';font-weight:700;color:#6ee7b7;font-size:14px;white-space:nowrap;text-align:right}
+.rec-save small{display:block;font-size:9px;color:var(--muted-2);font-family:'JetBrains Mono';letter-spacing:.08em;font-weight:400}
+
+/* ============ PREDICTIONS ============ */
+.model-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-soft);font-size:12px}
+.model-row:last-child{border-bottom:0}
+.model-row span{color:var(--muted)}
+.model-row b{font-weight:600;color:#dbe4fb}
+.accuracy-big{text-align:center;padding:14px 0 12px;border-bottom:1px solid var(--border-soft);margin-bottom:6px}
+.accuracy-big div{font-family:'Space Grotesk';font-size:46px;font-weight:700;letter-spacing:-.03em;background:linear-gradient(135deg,#67e8f9,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.accuracy-big span{font-size:10px;letter-spacing:.18em;color:var(--muted-2);font-family:'JetBrains Mono'}
+.feat-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.feat-chip{font-family:'JetBrains Mono';font-size:9.5px;color:#a5c8ff;background:#131f45;border:1px solid var(--border);border-radius:7px;padding:4px 9px}
+.predict-table td{font-size:12px}
+
+/* ============ SETTINGS ============ */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.toggle-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border-soft)}
+.toggle-row:last-child{border-bottom:0}
+.toggle-row b{font-size:12.5px;display:block;font-weight:600}
+.toggle-row span{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+.toggle-row .switch{margin-left:auto}
+.integration-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border-soft)}
+.integration-row:last-child{border-bottom:0}
+.int-logo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:13px;flex-shrink:0}
+.connected{font-family:'JetBrains Mono';font-size:9.5px;color:#6ee7b7;letter-spacing:.1em;display:flex;align-items:center;gap:6px;margin-left:auto}
+.api-row{display:flex;gap:9px;align-items:center;margin-top:6px}
+.api-key{flex:1;font-family:'JetBrains Mono';font-size:11.5px;background:#0a1128;border:1px solid var(--border-soft);border-radius:11px;padding:12px 14px;color:#9fd9ff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.danger-card{border-color:rgba(251,113,133,.3);background:linear-gradient(165deg,rgba(60,18,30,.4),rgba(20,12,26,.6))}
+.danger-flex{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+
+/* footer */
+.content-foot{margin-top:26px;padding:17px 4px 6px;border-top:1px solid var(--border-soft);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:10.5px;color:var(--muted-2)}
+.content-foot a{color:var(--muted);text-decoration:none}
+.content-foot a:hover{color:var(--cyan)}
+
+/* ============ TOASTS ============ */
+.toast-container{position:fixed;top:18px;right:18px;z-index:100;display:flex;flex-direction:column;gap:10px}
+.toast{display:flex;gap:11px;align-items:flex-start;width:355px;max-width:92vw;background:#121c3d;border:1px solid var(--border);border-left:3px solid var(--green);padding:13px 14px;border-radius:14px;box-shadow:var(--shadow);animation:toastIn .4s cubic-bezier(.2,.9,.3,1.1)}
+@keyframes toastIn{from{opacity:0;transform:translateX(60px)}}
+.toast.info{border-left-color:var(--cyan)}.toast.warning{border-left-color:var(--amber)}.toast.error{border-left-color:var(--red)}
+.toast-icon{flex-shrink:0;margin-top:1px}
+.toast.success .toast-icon{color:var(--green)}.toast.info .toast-icon{color:var(--cyan)}.toast.warning .toast-icon{color:var(--amber)}.toast.error .toast-icon{color:var(--red)}
+.toast-body{flex:1;min-width:0}
+.toast-body b{font-size:12px;display:block}
+.toast-body span{font-size:11px;color:var(--muted);display:block;margin-top:3px;line-height:1.5}
+.toast-close{background:none;border:0;color:var(--muted-2);cursor:pointer;font-size:17px;line-height:1;padding:2px}
+.toast-close:hover{color:#fff}
+.toast.leaving{opacity:0;transform:translateX(50px);transition:.35s}
+
+.overlay{position:fixed;inset:0;background:rgba(4,7,17,.62);backdrop-filter:blur(3px);z-index:35;opacity:0;pointer-events:none;transition:.3s}
+body.sidebar-open .overlay{opacity:1;pointer-events:auto}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1240px){
+  .s8,.s7{grid-column:span 12}
+  .s4,.s5,.s6{grid-column:span 6}
+  .sim-grid{grid-template-columns:340px 1fr}
+}
+@media(max-width:1100px){
+  .sim-grid{grid-template-columns:1fr}
+  .sim-control{position:static}
+  .sim-bottom{grid-template-columns:1fr}
+  .cost-kpis{grid-template-columns:repeat(2,1fr)}
+  .summary-chips{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:992px){
+  .sidebar{position:fixed;top:0;bottom:0;left:0;transform:translateX(-106%);height:100vh;box-shadow:30px 0 70px rgba(0,0,0,.5)}
+  body.sidebar-open .sidebar{transform:none}
+  .sidebar-close{display:flex}
+  .hamburger{display:flex}
+  .s3,.s4,.s5,.s6,.s7,.s8{grid-column:span 12}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .policies-grid,.settings-grid{grid-template-columns:1fr}
+  .events-grid{grid-template-columns:1fr}
+  .event-item:nth-last-child(-n+2){border-bottom:1px solid var(--border-soft)}
+  .event-item:last-child{border-bottom:0}
+  .env-pill,.clock,.search kbd{display:none}
+  .content{padding:18px 16px 40px}
+  .live-pill{display:none}
+}
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:1fr}
+  .cost-kpis,.summary-chips{grid-template-columns:1fr 1fr}
+  .scenario-grid{grid-template-columns:repeat(3,1fr)}
+  .sim-stats{grid-template-columns:repeat(2,1fr)}
+  .sim-stat:nth-child(2){border-right:0}
+  .alert-dropdown{position:fixed;top:70px;right:10px;left:10px;width:auto}
+  .search{display:none}
+  .topbar{padding:0 14px;gap:8px}
+}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="bg-fx"></div>
+<div class="bg-grid"></div>
+<div class="overlay" id="overlay"></div>
+
+<div class="app">
+
+  <!-- ════════════ SIDEBAR ════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo-row">
+      <svg class="logo-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="16" fill="url(#lg1)"/>
+        <path d="M36 7 L16 37.5 h12.5 L27 57 L49 26.5 H36 Z" fill="#e8feff"/>
+        <path d="M36 7 L16 37.5 h12.5 L27 57" stroke="#0b1122" stroke-width="1.4" stroke-linejoin="round" opacity=".35"/>
+        <defs>
+          <linearGradient id="lg1" x1="8" y1="4" x2="56" y2="62">
+            <stop offset="0" stop-color="#22d3ee"/><stop offset=".55" stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div>
+        <div class="logo-name">AutoScale <span>AI</span></div>
+        <div class="logo-sub">CLOUD OPTIMIZATION</div>
+      </div>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <nav class="nav" aria-label="Primary navigation">
+      <div class="nav-label">MONITOR</div>
+      <button class="nav-item active" data-page="overview">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.2" height="7.2" rx="1.8"/><rect x="13.8" y="3" width="7.2" height="7.2" rx="1.8"/><rect x="3" y="13.8" width="7.2" height="7.2" rx="1.8"/><rect x="13.8" y="13.8" width="7.2" height="7.2" rx="1.8"/></svg>
+        Overview
+      </button>
+      <button class="nav-item" data-page="simulator">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Live Simulator
+        <span class="live-chip">LIVE</span>
+      </button>
+      <button class="nav-item" data-page="instances">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="19" height="7" rx="2"/><rect x="2.5" y="14" width="19" height="7" rx="2"/><path d="M6.5 6.5h.01M6.5 17.5h.01"/></svg>
+        Instances
+        <span class="nav-badge" id="navInstanceCount">13</span>
+      </button>
+      <button class="nav-item" data-page="predictions">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg>
+        AI Predictions
+      </button>
+
+      <div class="nav-label">MANAGE</div>
+      <button class="nav-item" data-page="policies">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h10M18 8h2M4 16h4M12 16h8"/><circle cx="16" cy="8" r="2.2"/><circle cx="10" cy="16" r="2.2"/></svg>
+        Scaling Policies
+      </button>
+      <button class="nav-item" data-page="costs">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 6.5c0-1.9-2.2-3-5-3s-5 1.1-5 3.2 2 3 5 3.6 5 1.6 5 3.7-2.4 3.5-5 3.5-5-1.3-5-3.5"/></svg>
+        Cost &amp; Savings
+      </button>
+
+      <div class="nav-label">SYSTEM</div>
+      <button class="nav-item" data-page="settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+    </nav>
+
+    <div class="side-foot">
+      <div class="engine-card">
+        <div class="engine-top" id="engineTopRow">
+          <span class="pulse-dot" id="engineDot"></span>
+          <span id="engineState">Auto-Scale Engine Online</span>
+        </div>
+        <div class="engine-meta"><span>uptime 99.98%</span><span>·</span><span>v2.4.1</span><span>·</span><span>us-east-1</span></div>
+        <div class="engine-meta dim">policy eval <span id="engineEval">0.4</span>s ago · 0 dropped actions</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ════════════ MAIN ════════════ -->
+  <div class="main">
+
+    <!-- topbar -->
+    <header class="topbar">
+      <button class="icon-btn hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <div class="search" role="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="globalSearch" type="text" placeholder="Search instances, services, policies… (press Enter)" autocomplete="off" spellcheck="false">
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="topbar-right">
+        <div class="env-pill"><span class="pulse-dot sm"></span>prod-us-east-1</div>
+        <div class="live-pill"><i></i>LIVE</div>
+        <div class="clock mono" id="clock">--:--:-- UTC</div>
+        <div class="bell-wrap">
+          <button class="icon-btn" id="alertBell" aria-label="Notifications">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            <span class="alert-badge" id="alertBadge">3</span>
+          </button>
+          <div class="alert-dropdown" id="alertDropdown" role="dialog" aria-label="Notifications">
+            <div class="dd-head"><span>Notifications</span><button id="clearAlertsBtn">Clear all</button></div>
+            <div class="dd-list" id="alertList"></div>
+          </div>
+        </div>
+        <div class="avatar" title="Alex Kumar — Platform Engineer">AK</div>
+      </div>
+    </header>
+
+    <!-- scrollable content -->
+    <main class="content" id="content">
+
+      <!-- ════════════════════════════════ PAGE: OVERVIEW ════════════════════════════════ -->
+      <section class="page active" id="page-overview">
+        <div class="page-head">
+          <div>
+            <div class="breadcrumb">AUTOSCALE AI / <b>FLEET OVERVIEW</b></div>
+            <h1 class="page-title">Production Cluster<small>Real-time telemetry, AI-driven allocation and scaling decisions across us-east-1</small></h1>
+          </div>
+          <button class="btn btn-primary" id="headLaunchBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Launch Instance
+          </button>
+        </div>
+
+        <!-- KPI row -->
+        <div class="kpi-grid">
+          <div class="card kpi">
+            <div class="kpi-top">
+              <div class="kpi-icon cyan"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></div>
+              <span class="delta good">▼ 3.2% vs 7d</span>
+            </div>
+            <div class="kpi-label">Avg CPU Utilization</div>
+            <div class="kpi-value"><span id="kpiCpu">62.4</span><span class="unit">%</span></div>
+            <div class="kpi-foot">Fleet-wide · scale-out band above 65%</div>
+          </div>
+          <div class="card kpi">
+            <div class="kpi-top">
+              <div class="kpi-icon violet"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="19" height="7" rx="2"/><rect x="2.5" y="14" width="19" height="7" rx="2"/><path d="M6.5 6.5h.01M6.5 17.5h.01"/></svg></div>
+              <span class="delta flat">13 ACTIVE</span>
+            </div>
+            <div class="kpi-value"><span id="kpiInstances">13</span><span class="unit">/ 16 max</span></div>
+            <div class="kpi-foot">Capacity managed by target-tracking</div>
+          </div>
+          <div class="card kpi">
+            <div class="kpi-top">
+              <div class="kpi-icon green"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5L5 19"/><circle cx="7.5" cy="7.5" r="2.6"/><circle cx="16.5" cy="16.5" r="2.6"/></svg></div>
+              <span class="delta good">▲ 18.2% eff.</span>
+            </div>
+            <div class="kpi-label">Cost Savings · 30d</div>
+            <div class="kpi-value"><span class="unit">$</span><span id="kpiSavings">0</span></div>
+            <div class="kpi-foot">vs. static on-demand provisioning</div>
+          </div>
+          <div class="card kpi">
+            <div class="kpi-top">
+              <div class="kpi-icon amber"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 11-13h-8l1-7z"/></svg></div>
+              <span class="delta good">▼ 12ms p99</span>
+            </div>
+            <div class="kpi-label">Avg Response Time</div>
+            <div class="kpi-value"><span id="kpiRtt">128</span><span class="unit">ms</span></div>
+            <div class="kpi-foot">SLO target ≤ 250ms · 99.97% in-budget</div>
+          </div>
+        </div>
+
+        <!-- utilization + engine -->
+        <div class="grid-12">
+          <div class="card s8">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>Cluster Utilization <span class="card-sub">· streaming every 2s</span></div>
+              <div class="legend-chips"><span class="chip"><i style="--c:#22d3ee"></i>CPU</span><span class="chip"><i style="--c:#8b5cf6"></i>Memory</span></div>
+            </div>
+            <div class="card-body" style="padding-top:6px"><div id="chartUtilization" class="chart"></div></div>
+          </div>
+
+          <div class="card s4">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon violet"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></span>Auto-Scale Engine</div>
+              <span class="status-pill ok" id="enginePill">OPERATIONAL</span>
+            </div>
+            <div class="engine-body">
+              <div id="chartGauge" class="chart"></div>
+              <div class="engine-rows">
+                <div class="engine-row"><span>Scaling policy</span><b>target-tracking · cpu</b></div>
+                <div class="engine-row"><span>Target utilization</span><b id="engineTarget">65%</b></div>
+                <div class="engine-row"><span>Capacity range</span><b id="engineCapacity">2 – 16 pods</b></div>
+                <div class="engine-row"><span>Scale-in cooldown</span><b>300s · READY</b></div>
+              </div>
+              <button class="btn btn-ghost btn-block" style="margin-top:13px" data-page-link="simulator">
+                Open Live Simulator
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- allocation / consumers / health -->
+        <div class="grid-12">
+          <div class="card s4">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon violet"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 15.9A9 9 0 1 1 8.1 2.8a7 7 0 0 0 13.1 13.1z"/></svg></span>Resource Allocation<span class="card-sub">· by service</span></div>
+            </div>
+            <div class="card-body" style="padding-top:2px"><div id="chartAllocation" class="chart"></div></div>
+          </div>
+
+          <div class="card s4">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2.5-1.3-3.4C8.9 7.7 9 6 9.6 4.5 11.9 6 13 9 12.8 11.9c.9-.5 1.6-1.5 1.9-2.9 1.4 1.6 2.3 3.9 2.3 6A5 5 0 0 1 12 20a5.4 5.4 0 0 1-4.5-2.7c-.9-1.7-.3-3 .9-4.4.6.4 1.5.9 2.3 1.6z"/></svg></span>Top Consumers<span class="card-sub">· cpu pressure</span></div>
+            </div>
+            <div class="card-body" id="consumerList" style="padding-top:8px"></div>
+          </div>
+
+          <div class="card s4">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Fleet Health</div>
+            </div>
+            <div class="card-body" style="padding-top:12px">
+              <div class="health-hero">
+                <div class="health-ring"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+                <div><b>All systems operational</b><span>0 active incidents · 30d error budget 97.3%</span></div>
+              </div>
+              <div class="health-grid">
+                <div class="health-stat"><b>24 / 24</b><span>Nodes healthy</span></div>
+                <div class="health-stat"><b>99.98%</b><span>Availability · 90d</span></div>
+                <div class="health-stat"><b>v2.4.1</b><span>Deploy · 100% rollout</span></div>
+                <div class="health-stat"><b>0</b><span>Incidents · 30d</span></div>
+              </div>
+              <div class="az-row">
+                Availability-zone balance
+                <div class="az-line"><label>us-east-1a</label><div class="bar"><i style="width:40%"></i></div><em>40%</em></div>
+                <div class="az-line"><label>us-east-1b</label><div class="bar"><i style="width:35%"></i></div><em>35%</em></div>
+                <div class="az-line"><label>us-east-1c</label><div class="bar"><i style="width:25%"></i></div><em>25%</em></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- events -->
+        <div class="grid-12" style="margin-bottom:0">
+          <div class="card s12">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l2.5 2.5"/><circle cx="12" cy="12" r="9"/></svg></span>Recent Scaling Events<span class="card-sub">· last 6 actions by the engine</span></div>
+              <button class="btn btn-ghost btn-sm" data-page-link="policies">View policies
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+            <div class="events-grid" id="eventList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════ PAGE: SIMULATOR ════════════════════════════════ -->
+      <section class="page" id="page-simulator">
+        <div class="page-head">
+          <div>
+            <div class="breadcrumb">AUTOSCALE AI / <b>CAPACITY SANDBOX</b></div>
+            <h1 class="page-title">Live Auto-Scaling Simulator<small>Inject traffic, watch the predictive target-tracking engine rebalance the fleet in real time</small></h1>
+          </div>
+          <span class="status-pill ok" style="font-size:10px;padding:7px 13px">SANDBOX · ISOLATED FROM PROD</span>
+        </div>
+
+        <div class="sim-grid">
+          <!-- control column -->
+          <div class="card sim-control">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M12 10a4 4 0 1 0-4-4M12 10a4 4 0 1 1 4-4"/><path d="M8 20h8"/></svg></span>Traffic Load Injector</div>
+              <button class="icon-btn" id="btnResetSim" title="Reset simulation" style="width:34px;height:34px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+              </button>
+            </div>
+            <div class="card-body" style="padding-top:8px">
+              <div class="load-readout"><span class="load-num"><span id="loadValue">34</span><span class="unit">%</span></span></div>
+              <div class="load-cap">INJECTED TRAFFIC INTENSITY</div>
+              <input type="range" class="slider" id="trafficSlider" min="0" max="100" value="34" aria-label="Traffic intensity">
+              <div class="slider-scale"><span>0 · IDLE</span><span>25</span><span>50 · NORMAL</span><span>75</span><span>100 · MELTDOWN</span></div>
+              <div class="scenario-grid">
+                <button class="scenario-btn active" data-scenario="32" style="--sc:#34d399"><i></i>Normal<small>~32% load</small></button>
+                <button class="scenario-btn" data-scenario="56" style="--sc:#22d3ee"><i></i>Ramp Up<small>~56% load</small></button>
+                <button class="scenario-btn" data-scenario="79" style="--sc:#fbbf24"><i></i>Traffic Spike<small>~79% load</small></button>
+                <button class="scenario-btn" data-scenario="97" style="--sc:#fb7185"><i></i>Stress Test<small>~97% load</small></button>
+                <button class="scenario-btn" data-scenario="10" style="--sc:#818cf8"><i></i>Cool Down<small>~10% load</small></button>
+                <button class="scenario-btn" data-scenario="surge" style="--sc:#c084fc"><i></i>Random Surge<small>unpredictable</small></button>
+              </div>
+              <div class="divider"></div>
+              <div class="sim-meta-row"><span>Target utilization</span><b id="simTargetReadout">65%</b></div>
+              <div class="sim-meta-row"><span>Capacity range</span><b id="simBoundsReadout">2 – 16 pods</b></div>
+              <div class="sim-meta-row"><span>Predictive pre-scaling</span><b id="simPredictiveReadout">ON</b></div>
+              <div class="sim-meta-row"><span>Peak load this session</span><b id="simPeakReadout">34%</b></div>
+              <button class="policy-link" data-page-link="policies">Configure scaling policies
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- fleet + charts + console -->
+          <div class="sim-right">
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title"><span class="title-icon cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="19" height="7" rx="2"/><rect x="2.5" y="14" width="19" height="7" rx="2"/><path d="M6.5 6.5h.01M6.5 17.5h.01"/></svg></span>Elastic Fleet<span class="card-sub">· pods register with the ALB when healthy</span></div>
+                <div class="fleet-head-meta">
+                  <span class="cooldown-chip" id="simCooldown">READY</span>
+                  <span class="mono" style="font-size:11px;color:var(--muted)"><b id="podCount" style="color:#8ceaff">4</b> pods · avg <b id="simAvgCpuMini" style="color:#8ceaff">34%</b></span>
+                </div>
+              </div>
+              <div class="sim-stats">
+                <div class="sim-stat"><span>Fleet CPU</span><b id="simCpu">34<small>%</small></b></div>
+                <div class="sim-stat"><span>Avg Latency</span><b id="simRtt">72<small>ms</small></b></div>
+                <div class="sim-stat"><span>Throughput</span><b id="simRps">798<small> rps</small></b></div>
+                <div class="sim-stat"><span>Scale Actions</span><b id="simScaleCount">0</b></div>
+              </div>
+              <div class="pod-grid" id="podGrid"></div>
+            </div>
+
+            <div class="sim-bottom">
+              <div class="card">
+                <div class="card-head">
+                  <div class="card-title"><span class="title-icon violet"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-7"/></svg></span>CPU vs. Target</div>
+                </div>
+                <div class="card-body" style="padding-top:6px">
+                  <div id="simChart" class="chart"></div>
+                  <div class="sim-foot"><span id="simChartNote">Target tracking · scaling out above 65%</span><span>40s window · 1s res</span></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-head">
+                  <div class="card-title"><span class="title-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-5-6-5M12 19h8"/></svg></span>Decision Console</div>
+                  <button class="btn btn-ghost btn-sm" id="clearSimLog">Clear</button>
+                </div>
+                <div class="console" id="simLog" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════ PAGE: INSTANCES ════════════════════════════════ -->
+      <section class="page" id="page-instances">
+        <div class="page-head">
+          <div>
+            <div class="breadcrumb">AUTOSCALE AI / <b>FLEET MANAGER</b></div>
+            <h1 class="page-title">Instance Fleet<small>Every node registered with the service mesh, with live per-instance pressure</small></h1>
+          </div>
+          <button class="btn btn-primary" id="launchInstanceBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Launch Instance
+          </button>
+        </div>
+
+        <div class="summary-chips">
+          <div class="sum-chip"><div class="sum-ico title-icon violet" style="width:40px;height:40px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2.5" y="3" width="19" height="7" rx="2"/><rect x="2.5" y="14" width="19" height="7" rx="2"/></svg></div><div><b id="sumTotal">13</b><span>Total Instances</span></div></div>
+          <div class="sum-chip"><div class="sum-ico title-icon green" style="width:40px;height:40px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><b id="sumRunning">11</b><span>Running Healthy</span></div></div>
+          <div class="sum-chip"><div class="sum-ico title-icon cyan" style="width:40px;height:40px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 2v3M15 2v3M2 9h3M2 15h3M19 9h3M19 15h3M9 19v3M15 19v3"/></svg></div><div><b id="sumAvgCpu">57%</b><span>Mean CPU Load</span></div></div>
+          <div class="sum-chip"><div class="sum-ico title-icon amber" style="width:40px;height:40px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 6.5c0-1.9-2.2-3-5-3s-5 1.1-5 3.2 2 3 5 3.6 5 1.6 5 3.7-2.4 3.5-5 3.5-5-1.3-5-3.5"/></svg></div><div><b id="sumCost">$1,840</b><span>Est. Cost / Month</span></div></div>
+        </div>
+
+        <div class="table-tools">
+          <div class="mini-search">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input id="instanceSearch" type="text" placeholder="Filter by id, service, type or AZ…" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="filter-pills" id="filterPills">
+            <button class="filter-pill active" data-filter="all">All · <span class="fp-count">13</span></button>
+            <button class="filter-pill" data-filter="running">Running · <span class="fp-count">11</span></button>
+            <button class="filter-pill" data-filter="starting">Starting · <span class="fp-count">1</span></button>
+            <button class="filter-pill" data-filter="standby">Standby · <span class="fp-count">1</span></button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table aria-label="Instances">
+            <thead><tr><th>Instance</th><th>Service</th><th>Type</th><th>AZ</th><th>CPU</th><th>Memory</th><th>Status</th><th>Age</th><th></th></tr></thead>
+            <tbody id="instanceTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════ PAGE: PREDICTIONS ════════════════════════════════ -->
+      <section class="page" id="page-predictions">
+        <div class="page-head">
+          <div>
+            <div class="breadcrumb">AUTOSCALE AI / <b>FORECAST ENGINE</b></div>
+            <h1 class="page-title">AI Load Predictions<small>Prophet-LSTM hybrid forecast · 24h look-ahead with confidence bands</small></h1>
+          </div>
+          <button class="btn btn-violet" id="retrainBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 3v6h-6"/></svg>
+            Retrain Model
+          </button>
+        </div>
+
+        <div class="grid-12">
+          <div class="card s8">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon violet"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>48h Window · History + Forecast<span class="card-sub">· 95% confidence band</span></div>
+              <div class="legend-chips"><span class="chip"><i style="--c:#22d3ee"></i>Actual</span><span class="chip"><i style="--c:#a78bfa"></i>Forecast</span></div>
+            </div>
+            <div class="card-body" style="padding-top:4px"><div id="forecastChart" class="chart"></div></div>
+          </div>
+
+          <div class="card s4">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5 5 5 0 0 1-1 3 6 6 0 0 1 2 4.5A5.5 5.5 0 0 1 12.5 20 5.5 5.5 0 0 1 7 14.5 6 6 0 0 1 9 10a5 5 0 0 1-1-3 5 5 0 0 1 4-5z"/></svg></span>Model Intelligence</div>
+            </div>
+            <div class="card-body" style="padding-top:12px">
+              <div class="accuracy-big"><div id="modelAccuracy">94.6%</div><span>FORECAST ACCURACY</span></div>
+              <div class="model-row"><span>Architecture</span><b>Prophet-LSTM Hybrid</b></div>
+              <div class="model-row"><span>Version</span><b class="mono" style="font-size:11px">v2.4.1 · production</b></div>
+              <div class="model-row"><span>MAPE (error)</span><b id="modelMape">5.4%</b></div>
+              <div class="model-row"><span>Last trained</span><b id="modelTrained">2h ago · 14d window</b></div>
+              <div class="model-row" style="border-bottom:0"><span>Training cadence</span><b>Every 6h · automatic</b></div>
+              <div class="feat-chips"><span class="feat-chip">traffic_history</span><span class="feat-chip">calendar_events</span><span class="feat-chip">deploy_markers</span><span class="feat-chip">cost_budget</span><span class="feat-chip">queue_depth</span><span class="feat-chip">error_rate</span></div>
+              <div class="divider"></div>
+              <div class="toggle-row" style="border:0;padding:4px 0 0">
+                <div><b>Predictive auto-scaling</b><span>Pre-warm capacity before forecasted peaks</span></div>
+                <label class="switch"><input type="checkbox" id="predictiveToggleMain" checked><span class="track"></span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-12" style="margin-bottom:0">
+          <div class="card s12">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 11-13h-8l1-7z"/></svg></span>Predicted Peak Windows — Next 24h<span class="card-sub">· actions the engine will take</span></div>
+            </div>
+            <div class="card-body" style="padding-top:10px">
+              <div class="table-wrap" style="border:0">
+                <table class="predict-table" style="min-width:720px">
+                  <thead><tr><th>Window (UTC)</th><th>Expected Load</th><th>Peak CPU</th><th>AI Action</th><th>Confidence</th></tr></thead>
+                  <tbody>
+                    <tr><td class="mono" style="color:#9fd9ff">14:00 – 15:30</td><td>8,400 rps</td><td>81%</td><td><span class="pill cyan">Pre-scale +3 @ 13:40</span></td><td class="mono">93%</td></tr>
+                    <tr><td class="mono" style="color:#9fd9ff">19:00 – 20:00</td><td>6,100 rps</td><td>68%</td><td><span class="pill standby">Hold capacity</span></td><td class="mono">88%</td></tr>
+                    <tr><td class="mono" style="color:#9fd9ff">02:00 – 06:00</td><td>900 rps</td><td>14%</td><td><span class="pill violet">Scale down → 2 pods</span></td><td class="mono">96%</td></tr>
+                    <tr><td class="mono" style="color:#9fd9ff">Tomorrow 09:30</td><td>7,750 rps</td><td>76%</td><td><span class="pill cyan">Pre-scale +2 @ 09:15</span></td><td class="mono">91%</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════ PAGE: POLICIES ════════════════════════════════ -->
+      <section class="page" id="page-policies">
+        <div class="page-head">
+          <div>
+            <div class="breadcrumb">AUTOSCALE AI / <b>SCALING POLICIES</b></div>
+            <h1 class="page-title">Scaling Policies<small>Declarative guardrails the engine evaluates every 15 seconds · changes apply instantly</small></h1>
+          </div>
+          <button class="btn btn-ghost" data-page-link="simulator">Test in Simulator
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+
+        <div class="policies-grid">
+          <!-- Policy 1: target tracking -->
+          <div class="card policy-card" id="policyCardMain">
+            <div class="policy-head">
+              <div class="policy-ico cyan"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></div>
+              <div>
+                <h3>Production · Target Tracking</h3>
+                <p>Continuously adjusts capacity so fleet CPU converges to your target. Scale-out is aggressive, scale-in is conservative.</p>
+              </div>
+              <label class="switch policy-toggle"><input type="checkbox" id="policyToggleMain" checked><span class="track"></span></label>
+            </div>
+            <div class="policy-body">
+              <div class="slider-row">
+                <div class="slider-head"><span>Target CPU utilization</span><b id="targetCpuVal">65%</b></div>
+                <input type="range" class="slider" id="targetCpuSlider" min="40" max="90" step="1" value="65">
+              </div>
+              <div class="slider-row">
+                <div class="slider-head"><span>Minimum capacity</span><b id="minCapVal">2 pods</b></div>
+                <input type="range" class="slider" id="minCapSlider" min="1" max="4" step="1" value="2">
+              </div>
+              <div class="slider-row">
+                <div class="slider-head"><span>Maximum capacity</span><b id="maxCapVal">16 pods</b></div>
+                <input type="range" class="slider" id="maxCapSlider" min="6" max="16" step="1" value="16">
+              </div>
+              <div class="slider-row">
+                <div class="slider-head"><span>Scale-in cooldown</span><b id="cooldownVal">300s</b></div>
+                <input type="range" class="slider" id="cooldownSlider" min="60" max="600" step="30" value="300">
+              </div>
+              <div class="policy-note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M13 2 3 14h7l-1 8 11-13h-8l1-7z"/></svg>
+                Changes apply instantly to the Live Simulator sandbox
+              </div>
+            </div>
+          </div>
+
+          <!-- Policy 2: predictive -->
+          <div class="card policy-card" id="policyCardPredictive">
+            <div class="policy-head">
+              <div class="policy-ico violet"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5 5 5 0 0 1-1 3 6 6 0 0 1 2 4.5A5.5 5.5 0 0 1 12.5 20 5.5 5.5 0 0 1 7 14.5 6 6 0 0 1 9 10a5 5 0 0 1-1-3 5 5 0 0 1 4-5z"/></svg></div>
+              <div>
+                <h3>Predictive Pre-Scaling</h3>
+                <p>Uses the 24h Prophet-LSTM forecast to warm capacity ahead of demand — before a single request is late.</p>
+              </div>
+              <label class="switch policy-toggle"><input type="checkbox" id="policyTogglePredictive" checked><span class="track"></span></label>
+            </div>
+            <div class="policy-body">
+              <div class="slider-row">
+                <div class="slider-head"><span>Minimum forecast confidence</span><b id="confVal">85%</b></div>
+                <input type="range" class="slider" id="confSlider" min="50" max="99" step="1" value="85">
+              </div>
+              <div class="sim-meta-row" style="margin-top:6px"><span>Look-ahead window</span><b>6 hours</b></div>
+              <div class="sim-meta-row"><span>Proactive headroom</span><b>+1 pod per peak event</b></div>
+              <div class="sim-meta-row"><span>Fallback</span><b>target-tracking (policy 1)</b></div>
+              <div class="sim-meta-row"><span>Model health</span><b style="color:#6ee7b7">nominal · drift 0.03</b></div>
+              <div class="policy-note" style="background:var(--violet-soft);border-color:rgba(139,92,246,.3);color:#c4b5fd">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg>
+                Last pre-scale saved an estimated $41 in SLO breach penalties
+              </div>
+            </div>
+          </div>
+
+          <!-- Policy 3: scheduled -->
+          <div class="card policy-card policy-disabled" id="policyCardScheduled">
+            <div class="policy-head">
+              <div class="policy-ico amber"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div>
+              <div>
+                <h3>Scheduled Off-Peak</h3>
+                <p>Cron-based capacity drops for predictable quiet hours. Deterministic, auditable, free.</p>
+              </div>
+              <label class="switch policy-toggle"><input type="checkbox" id="policyToggleScheduled"><span class="track"></span></label>
+            </div>
+            <div class="policy-body">
+              <div class="cron-chip"><code>0 2 * * *</code><span>Nightly → scale to 2 pods</span></div>
+              <div class="cron-chip"><code>30 8 * * 1-5</code><span>Weekday warm-up → 6 pods</span></div>
+              <div class="cron-chip"><code>0 23 * * 6</code><span>Saturday close → 4 pods</span></div>
+            </div>
+          </div>
+
+          <!-- Policy 4: step scaling -->
+          <div class="card policy-card policy-disabled" id="policyCardStep">
+            <div class="policy-head">
+              <div class="policy-ico red"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div>
+              <div>
+                <h3>Step Scaling <span class="mono" style="font-size:9px;color:#fda4af;vertical-align:2px;letter-spacing:.1em">LEGACY</span></h3>
+                <p>Fixed +2 pods above 70%, +4 above 85%. Retained for rollback safety. Not recommended over target-tracking.</p>
+              </div>
+              <label class="switch policy-toggle"><input type="checkbox" id="policyToggleStep"><span class="track"></span></label>
+            </div>
+            <div class="policy-body">
+              <div class="sim-meta-row"><span>cpu &gt; 70%</span><b>+2 pods</b></div>
+              <div class="sim-meta-row"><span>cpu &gt; 85%</span><b>+4 pods</b></div>
+              <div class="sim-meta-row"><span>cpu &lt; 25% (10m)</span><b>−1 pod</b></div>
+              <div class="sim-meta-row"><span>evaluation periods</span><b>2 of 3 · 60s</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-12" style="margin-bottom:0">
+          <div class="card s12">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="2.3"/><circle cx="12" cy="12" r="2.3"/><circle cx="19" cy="12" r="2.3"/></svg></span>Evaluation Order<span class="card-sub">· first matching policy wins, evaluated every 15s</span></div>
+            </div>
+            <div class="order-flow">
+              <div class="flow-step on"><b>1 · Predictive</b><span>look-ahead 6h</span></div>
+              <div class="flow-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+              <div class="flow-step on"><b>2 · Target Tracking</b><span>reactive · cpu</span></div>
+              <div class="flow-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+              <div class="flow-step"><b>3 · Scheduled</b><span>cron guardrails</span></div>
+              <div class="flow-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+              <div class="flow-step"><b>4 · Step (legacy)</b><span>safety net</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════ PAGE: COSTS ════════════════════════════════ -->
+      <section class="page" id="page-costs">
+        <div class="page-head">
+          <div>
+            <div class="breadcrumb">AUTOSCALE AI / <b>FINOPS</b></div>
+            <h1 class="page-title">Cost &amp; Savings<small>What intelligent allocation returned to your budget this cycle</small></h1>
+          </div>
+          <button class="btn btn-ghost" id="exportCostCsvBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            Export CSV
+          </button>
+        </div>
+
+        <div class="cost-kpis">
+          <div class="card cost-kpi"><span>This Month</span><b>$7,214</b><small>▼ 14.4% vs last month</small></div>
+          <div class="card cost-kpi"><span>On-Demand Equivalent</span><b>$12,190</b><small class="neg">what static capacity costs</small></div>
+          <div class="card cost-kpi"><span>Utilization Efficiency</span><b>78%</b><small>▲ target ≥ 75% · on track</small></div>
+          <div class="card cost-kpi"><span>Projected Annual Savings</span><b style="color:#6ee7b7">$58,960</b><small>▲ compounding monthly</small></div>
+        </div>
+
+        <div class="grid-12">
+          <div class="card s8">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3.4" height="6" rx=".8"/><rect x="12.3" y="8" width="3.4" height="10" rx=".8"/><rect x="17.6" y="5" width="3.4" height="13" rx=".8"/></svg></span>Cost: On-Demand vs. AutoScale-Optimized<span class="card-sub">· trailing 6 months</span></div>
+            </div>
+            <div class="card-body" style="padding-top:6px"><div id="costChart" class="chart"></div></div>
+          </div>
+
+          <div class="card s4">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5L5 19"/><circle cx="7.5" cy="7.5" r="2.6"/><circle cx="16.5" cy="16.5" r="2.6"/></svg></span>Savings Breakdown<span class="card-sub">· 30d · $4,821 total</span></div>
+            </div>
+            <div class="card-body" style="padding-top:14px">
+              <div class="save-row"><div class="save-ico">50%</div><div style="flex:1"><b>Rightsizing <span style="color:#6ee7b7">$2,410</span></b><span>6 × m5.xlarge → m5.large · idle headroom removed</span><div class="bar" style="margin-top:7px"><i style="width:50%"></i></div></div></div>
+              <div class="save-row"><div class="save-ico">32%</div><div style="flex:1"><b>Spot Fleet Blending <span style="color:#6ee7b7">$1,530</span></b><span>batch + CI pools on 68% spot capacity</span><div class="bar" style="margin-top:7px"><i style="width:32%"></i></div></div></div>
+              <div class="save-row"><div class="save-ico">18%</div><div style="flex:1"><b>Off-Peak Scaling <span style="color:#6ee7b7">$881</span></b><span>nights &amp; weekends at minimum capacity</span><div class="bar" style="margin-top:7px"><i style="width:18%"></i></div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-12" style="margin-bottom:0">
+          <div class="card s12">
+            <div class="card-head">
+              <div class="card-title"><span class="title-icon amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 11-13h-8l1-7z"/></svg></span>Optimization Recommendations<span class="card-sub">· generated from last 30d of telemetry</span></div>
+              <span class="mono" style="font-size:10.5px;color:var(--muted)">applied this session: <b id="appliedSavings" style="color:#6ee7b7">$0/mo</b></span>
+            </div>
+            <div style="padding-top:6px">
+              <div class="rec-item">
+                <div class="rec-ico cyan"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 2v3M15 2v3M2 9h3M2 15h3M19 9h3M19 15h3M9 19v3M15 19v3"/></svg></div>
+                <div class="rec-body"><b>Rightsize 6 under-utilized m5.xlarge → m5.large</b><span>Sustained 22% CPU over 30d on api-gateway nodes 4–9 · no latency impact projected</span></div>
+                <div class="rec-save">$214<small>/ MO</small></div>
+                <button class="btn btn-primary btn-sm apply-rec" data-savings="214">Apply</button>
+              </div>
+              <div class="rec-item">
+                <div class="rec-ico violet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2z"/><path d="M12 11.5L20 6.5M12 11.5L4 6.5M12 11.5V20"/></svg></div>
+                <div class="rec-body"><b>Move batch-workers pool to 80% spot instances</b><span>Interruptible workload · checkpointing already enabled · 0 failed jobs in 90d at current ratio</span></div>
+                <div class="rec-save">$385<small>/ MO</small></div>
+                <button class="btn btn-primary btn-sm apply-rec" data-savings="385">Apply</button>
+              </div>
+              <div class="rec-item">
+                <div class="rec-ico amber"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div>
+                <div class="rec-body"><b>Enable off-peak downscale for staging environment</b><span>10:00–06:00 UTC idle window · schedule min capacity 1 pod · zero deploy risk</span></div>
+                <div class="rec-save">$96<small>/ MO</small></div>
+                <button class="btn btn-primary btn-sm apply-rec" data-savings="96">Apply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════ PAGE: SETTINGS ════════════════════════════════ -->
+      <section class="page" id="page-settings">
+        <div class="page-head">
+          <div>
+            <div class="breadcrumb">AUTOSCALE AI / <b>WORKSPACE</b></div>
+            <h1 class="page-title">Settings<small>Profile, notifications, integrations and API access for the prod workspace</small></h1>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <!-- profile -->
+          <div class="card">
+            <div class="card-head"><div class="card-title"><span class="title-icon cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></span>Profile</div></div>
+            <div class="card-body">
+              <div class="field"><label for="profileName">Full name</label><input id="profileName" type="text" value="Alex Kumar" autocomplete="name"></div>
+              <div class="field"><label for="profileRole">Role</label><input id="profileRole" type="text" value="Staff Platform Engineer"></div>
+              <div class="field"><label for="profileEmail">Work email</label><input id="profileEmail" type="email" value="alex.kumar@yourcompany.io" autocomplete="email"></div>
+              <div class="field" style="margin-bottom:16px"><label for="profileTz">Timezone</label>
+                <select id="profileTz"><option>UTC — Coordinated Universal Time</option><option>America/New_York (ET)</option><option>America/Chicago (CT)</option><option>America/Denver (MT)</option><option>America/Los_Angeles (PT)</option><option>Europe/London (GMT)</option><option>Europe/Berlin (CET)</option><option>Asia/Singapore (SGT)</option><option>Asia/Tokyo (JST)</option></select>
+              </div>
+              <button class="btn btn-primary" id="saveProfileBtn">Save Profile</button>
+            </div>
+          </div>
+
+          <!-- notifications -->
+          <div class="card">
+            <div class="card-head"><div class="card-title"><span class="title-icon amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>Notifications</div></div>
+            <div class="card-body">
+              <div class="toggle-row"><div><b>Scale events</b><span>Email on every engine action — scale-out, scale-in, predictive warm-up</span></div><label class="switch"><input type="checkbox" class="js-notify" data-label="Scale-event emails" checked><span class="track"></span></label></div>
+              <div class="toggle-row"><div><b>Slack · #autoscale-alerts</b><span>Rich notifications with before/after capacity and cost impact</span></div><label class="switch"><input type="checkbox" class="js-notify" data-label="Slack alerts" checked><span class="track"></span></label></div>
+              <div class="toggle-row"><div><b>PagerDuty · critical only</b><span>Pages when SLO error budget burn exceeds 2× in 30 minutes</span></div><label class="switch"><input type="checkbox" class="js-notify" data-label="PagerDuty paging" checked><span class="track"></span></label></div>
+              <div class="toggle-row"><div><b>Weekly cost report</b><span>FinOps digest — savings attribution, anomalies, rightsizing wins</span></div><label class="switch"><input type="checkbox" class="js-notify" data-label="Weekly cost report"><span class="track"></span></label></div>
+            </div>
+          </div>
+
+          <!-- integrations -->
+          <div class="card">
+            <div class="card-head"><div class="card-title"><span class="title-icon violet"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.2 7.2l7.5 4M8.2 16.8l7.5-4"/></svg></span>Integrations</div></div>
+            <div class="card-body">
+              <div class="integration-row"><div class="int-logo" style="background:#3b2d5e;color:#c4b5fd">#</div><div><b style="font-size:12.5px">Slack</b><span style="font-size:10.5px;color:var(--muted);display:block;margin-top:2px">workspace: acme-platform · channel #autoscale-alerts</span></div><span class="connected"><span class="pulse-dot sm"></span>CONNECTED</span></div>
+              <div class="integration-row"><div class="int-logo" style="background:#3a2210;color:#fda4af">D</div><div><b style="font-size:12.5px">Datadog</b><span style="font-size:10.5px;color:var(--muted);display:block;margin-top:2px">metrics bridge · us1 · 40d retention</span></div><span class="connected"><span class="pulse-dot sm"></span>CONNECTED</span></div>
+              <div class="integration-row" style="border-bottom:0"><div class="int-logo" style="background:#12233a;color:#67e8f9">W</div><div style="flex:1;min-width:0"><b style="font-size:12.5px">Outgoing Webhook</b><span style="font-size:10.5px;color:var(--muted);display:block;margin:4px 0 8px">POST JSON on every scaling decision</span>
+                <div style="display:flex;gap:8px"><input id="webhookUrl" type="text" class="api-key" style="padding:9px 12px;font-size:10.5px" value="https://ops.yourcompany.io/hooks/autoscale" spellcheck="false"><button class="btn btn-ghost btn-sm" id="webhookTestBtn" style="flex-shrink:0">Test</button></div>
+              </div></div>
+            </div>
+          </div>
+
+          <!-- API access -->
+          <div class="card">
+            <div class="card-head"><div class="card-title"><span class="title-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l1.5 1.5M13 5l2 2M8 14l-5.3 5.3a2 2 0 0 0 2.8 2.8L11 17"/><circle cx="8" cy="16" r="4.2" fill="#0f1730"/></svg></span>API Access</div></div>
+            <div class="card-body">
+              <label style="font-size:10.5px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;font-weight:600">Live production key</label>
+              <div class="api-row">
+                <code class="api-key" id="apiKeyField">ask_live_••••••••••••••••••••••••••••••••</code>
+                <button class="icon-btn" id="revealKeyBtn" style="border:1px solid var(--border-soft)" title="Reveal / hide key"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3.2"/></svg></button>
+                <button class="icon-btn" id="copyKeyBtn" style="border:1px solid var(--border-soft)" title="Copy key"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
+              </div>
+              <div class="sim-meta-row" style="margin-top:14px"><span>Scope</span><b>read:fleet · write:scale · read:cost</b></div>
+              <div class="sim-meta-row"><span>Rate limit</span><b>600 req/min</b></div>
+              <div class="sim-meta-row"><span>Last rotation</span><b>24 days ago · auto in 66d</b></div>
+              <div class="sim-meta-row"><span>Audit trail</span><b>streamed · retained 400d</b></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- danger zone -->
+        <div class="grid-12" style="margin-bottom:0;margin-top:16px">
+          <div class="card danger-card s12">
+            <div class="card-head"><div class="card-title" style="color:#fda4af"><span class="title-icon red" style="background:var(--red-soft);color:var(--red)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>Danger Zone</div></div>
+            <div class="card-body">
+              <div class="danger-flex">
+                <div style="flex:1;min-width:240px">
+                  <b style="font-size:13px">Pause all auto-scaling</b>
+                  <p style="font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.6">Freezes every policy — the engine will observe and alert but never scale. Use during incident response or planned maintenance windows.</p>
+                </div>
+                <button class="btn btn-danger" id="dangerPauseBtn">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="5" width="4.5" height="14" rx="1.2"/><rect x="13.5" y="5" width="4.5" height="14" rx="1.2"/></svg>
+                  <span id="dangerPauseLabel">Pause Auto-Scaling</span>
+                </button>
+                <button class="btn btn-ghost" id="exportAuditBtn">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                  Export Audit Log
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="content-foot">
+        <span>AutoScale AI v2.4.1 · SOC 2 Type II · ISO 27001 · Data residency us-east-1</span>
+        <span><a href="#">Status</a> &nbsp;·&nbsp; <a href="#">API Docs</a> &nbsp;·&nbsp; <a href="#">Runbooks</a> &nbsp;·&nbsp; © 2025 AutoScale AI Inc.</span>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<!-- ════════════ MODAL: Launch Instance ════════════ -->
+<div class="modal" id="launchModal" role="dialog" aria-modal="true" aria-labelledby="launchModalTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="launchModalTitle">Launch New Instance</h3>
+      <button class="icon-btn" id="closeLaunchModal" aria-label="Close"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <form class="modal-body" id="launchForm">
+      <div class="field"><label for="launchService">Service name</label><input id="launchService" type="text" placeholder="checkout-api" required autocomplete="off" spellcheck="false"></div>
+      <div class="field"><label for="launchType">Instance type</label>
+        <select id="launchType"><option>t3.large — 2 vCPU · 8 GB</option><option selected>m5.xlarge — 4 vCPU · 16 GB</option><option>m5.2xlarge — 8 vCPU · 32 GB</option><option>c5.2xlarge — 8 vCPU · 16 GB · compute</option><option>r5.xlarge — 4 vCPU · 32 GB · memory</option></select>
+      </div>
+      <div class="field"><label for="launchAz">Availability zone</label>
+        <select id="launchAz"><option>us-east-1a</option><option selected>us-east-1b</option><option>us-east-1c</option></select>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="cancelLaunch">Cancel</button>
+        <button type="submit" class="btn btn-primary">Launch Instance</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="assertive"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script>
+/* ============================================================
+   AUTOSCALE AI — Application Logic
+   ============================================================ */
+'use strict';
+const $  = (s, c) => (c||document).querySelector(s);
+const $$ = (s, c) => Array.from((c||document).querySelectorAll(s));
+const rand  = (a,b) => a + Math.random()*(b-a);
+const clamp = (v,mn,mx) => Math.min(mx, Math.max(mn, v));
+const pad2  = n => String(n).padStart(2,'0');
+const timeNow = () => { const d=new Date(); return pad2(d.getHours())+':'+pad2(d.getMinutes())+':'+pad2(d.getSeconds()); };
+const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+/* ============ TOASTS ============ */
+const TOAST_ICONS = {
+  success:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  info:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+  warning:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+  error:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>'
+};
+function toast(title, msg, type, ms){
+  type = type || 'success'; ms = ms || 4600;
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = '<div class="toast-icon">'+TOAST_ICONS[type]+'</div><div class="toast-body"><b>'+esc(title)+'</b>'+(msg?'<span>'+esc(msg)+'</span>':'')+'</div><button class="toast-close" aria-label="Dismiss">×</button>';
+  $('#toastContainer').appendChild(el);
+  const kill = () => { el.classList.add('leaving'); setTimeout(() => el.remove(), 380); };
+  el.querySelector('.toast-close').addEventListener('click', kill);
+  setTimeout(kill, ms);
+}
+
+/* ============ NAVIGATION ============ */
+const inited = {};
+const charts = [];
+function resizeAll(){ charts.forEach(c => { try { c.resize(); } catch(e){} }); }
+function switchPage(name){
+  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === name));
+  $$('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + name));
+  ensurePageCharts(name);
+  $('#content').scrollTop = 0;
+  document.body.classList.remove('sidebar-open');
+  setTimeout(resizeAll, 90);
+}
+$$('.nav-item').forEach(n => n.addEventListener('click', () => switchPage(n.dataset.page)));
+$$('[data-page-link]').forEach(b => b.addEventListener('click', () => switchPage(b.dataset.pageLink)));
+
+$('#hamburgerBtn').addEventListener('click', () => document.body.classList.toggle('sidebar-open'));
+$('#sidebarClose').addEventListener('click', () => document.body.classList.remove('sidebar-open'));
+$('#overlay').addEventListener('click', () => document.body.classList.remove('sidebar-open'));
+
+/* ============ CLOCK & ENGINE HEARTBEAT ============ */
+function tickClock(){
+  const d = new Date();
+  $('#clock').textContent = pad2(d.getUTCHours())+':'+pad2(d.getUTCMinutes())+':'+pad2(d.getUTCSeconds())+' UTC';
+}
+setInterval(tickClock, 1000); tickClock();
+setInterval(() => { $('#engineEval').textContent = rand(0.2,0.9).toFixed(1); }, 1100);
+
+/* ============ ALERTS ============ */
+let alerts = [
+  {sev:'warning', title:'High CPU on ml-inference', meta:'74% for 8m sustained · pod scaler engaged', time:'12m ago'},
+  {sev:'info',    title:'Scaled out api-gateway 8 → 10', meta:'policy target-tracking · cpu 78% > target 65%', time:'26m ago'},
+  {sev:'warning', title:'Spend tracking +6% vs forecast', meta:'anomaly guard · day 21 of monthly cycle', time:'1h ago'}
+];
+const ALERT_ICONS = {
+  warning:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+  info:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>'
+};
+function renderAlerts(){
+  $('#alertBadge').textContent = alerts.length;
+  $('#alertBadge').style.display = alerts.length ? 'flex' : 'none';
+  $('#alertList').innerHTML = alerts.length
+    ? alerts.map(a => '<div class="alert-item"><div class="alert-ico '+a.sev+'">'+ALERT_ICONS[a.sev]+'</div><div><b>'+esc(a.title)+'</b><span>'+esc(a.meta)+'</span><em>'+esc(a.time)+'</em></div></div>').join('')
+    : '<div class="dd-empty">All clear — no active alerts.<br>The engine is watching everything.</div>';
+}
+renderAlerts();
+$('#alertBell').addEventListener('click', e => { e.stopPropagation(); $('#alertDropdown').classList.toggle('open'); });
+$('#clearAlertsBtn').addEventListener('click', () => { alerts = []; renderAlerts(); toast('Notifications cleared', 'Your alert inbox is empty.', 'info'); });
+document.addEventListener('click', e => { if(!e.target.closest('.bell-wrap')) $('#alertDropdown').classList.remove('open'); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape'){ $('#alertDropdown').classList.remove('open'); $('#launchModal').classList.remove('open'); } });
+
+/* ============ SCALING EVENTS (overview) ============ */
+const EVENT_ICONS = {
+  up:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>',
+  down:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 18l-9.5-9.5-5 5L1 6"/><path d="M17 18h6v-6"/></svg>',
+  predict:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/></svg>',
+  info:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+};
+let events = [
+  {type:'up',      text:'api-gateway scaled out 8 → 10 pods', reason:'cpu 78% > target 65% · target-tracking', time:'2m ago'},
+  {type:'predict', text:'ai-forecast pre-warmed +2 pods for 14:00 peak', reason:'confidence 93% · 6h look-ahead window', time:'18m ago'},
+  {type:'down',    text:'batch-workers scaled in 6 → 3 pods', reason:'cpu 19% · below scale-in band for 10m', time:'34m ago'},
+  {type:'up',      text:'ml-inference scaled out 4 → 5 pods', reason:'queue depth 240 > threshold 200', time:'1h ago'},
+  {type:'info',    text:'deployment v2.4.1 fully rolled out', reason:'canary 5% → 100% · zero error budget burn', time:'3h ago'},
+  {type:'down',    text:'staging cluster scaled to minimum', reason:'scheduled policy · weekend window', time:'5h ago'}
+];
+function renderEvents(){
+  $('#eventList').innerHTML = events.map(e =>
+    '<div class="event-item"><div class="event-icon '+e.type+'">'+EVENT_ICONS[e.type]+'</div><div class="event-body"><b>'+esc(e.text)+'</b><span>'+esc(e.reason)+'</span></div><span class="event-time mono">'+esc(e.time)+'</span></div>'
+  ).join('');
+}
+renderEvents();
+
+/* ============ TOP CONSUMERS ============ */
+const consumers = [
+  {name:'api-gateway', cpu:82, pods:10},
+  {name:'ml-inference', cpu:74, pods:5},
+  {name:'payment-svc', cpu:61, pods:4},
+  {name:'web-frontend', cpu:48, pods:6},
+  {name:'auth-service', cpu:33, pods:2}
+];
+$('#consumerList').innerHTML = consumers.map(c =>
+  '<div class="consumer"><div class="consumer-top"><b>'+c.name+'</b><span>'+c.cpu+'% · '+c.pods+' pods</span></div><div class="bar"><i data-w="'+c.cpu+'" class="'+(c.cpu>75?'amber':'')+'"></i></div></div>'
+).join('');
+requestAnimationFrame(() => setTimeout(() => $$('#consumerList .bar > i').forEach(b => b.style.width = b.dataset.w + '%'), 250));
+
+/* ============ CHART HELPERS ============ */
+const tipBase = {
+  backgroundColor:'#111a38',
+  borderColor:'rgba(125,232,255,.3)',
+  borderWidth:1,
+  padding:[10,13],
+  textStyle:{color:'#e8edf9', fontSize:11.5, fontFamily:'Inter'},
+  extraCssText:'box-shadow:0 12px 34px rgba(0,0,0,.5);border-radius:11px;'
+};
+const axisMuted = {axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#66739c', fontFamily:'JetBrains Mono', fontSize:9.5}};
+
+/* ============ OVERVIEW CHARTS ============ */
+let utilChart = null, donutChart = null, gaugeChart = null;
+const utilData = {labels:[], cpu:[], mem:[]};
+(function seedUtil(){
+  for(let i = 44; i > 0; i--){
+    const wave = 58 + 15*Math.sin(i*0.31) + 6*Math.sin(i*0.12 + 2.1);
+    const v = clamp(wave + rand(-2.5,2.5), 24, 93);
+    utilData.labels.push('');
+    utilData.cpu.push(+v.toFixed(1));
+    utilData.mem.push(+clamp(v*0.72 + rand(9,15), 18, 95).toFixed(1));
+  }
+})();
+
+function initOverviewCharts(){
+  /* utilization line */
+  utilChart = echarts.init($('#chartUtilization'), null, {renderer:'canvas'});
+  utilChart.setOption({
+    grid:{left:36, right:6, top:14, bottom:26},
+    tooltip:Object.assign({trigger:'axis', axisPointer:{type:'cross', lineStyle:{color:'rgba(125,232,255,.45)'}, label:{show:false}}}, tipBase),
+    xAxis:Object.assign({type:'category', boundaryGap:false, data:utilData.labels.map(()=>''), splitLine:{show:false}}, axisMuted),
+    yAxis:{type:'value', max:100, splitNumber:4, axisLabel:{color:'#66739c', fontFamily:'JetBrains Mono', fontSize:9.5, formatter:'{value}%'}, splitLine:{lineStyle:{type:'dashed', color:'rgba(130,160,220,.1)'}}},
+    series:[
+      {name:'CPU', type:'line', smooth:0.42, symbol:'none', z:5,
+       lineStyle:{width:2.6, color:'#22d3ee', shadowColor:'rgba(34,211,238,.55)', shadowBlur:12},
+       areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(34,211,238,.32)'},{offset:1,color:'rgba(34,211,238,0)'}])},
+       data:utilData.cpu.slice()},
+      {name:'Memory', type:'line', smooth:0.42, symbol:'none', z:4,
+       lineStyle:{width:2.2, color:'#8b5cf6', shadowColor:'rgba(139,92,246,.5)', shadowBlur:12},
+       areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(139,92,246,.3)'},{offset:1,color:'rgba(139,92,246,0)'}])},
+       data:utilData.mem.slice()}
+    ]
+  });
+  charts.push(utilChart);
+
+  /* allocation donut */
+  donutChart = echarts.init($('#chartAllocation'), null, {renderer:'canvas'});
+  donutChart.setOption({
+    tooltip:Object.assign({trigger:'item', formatter:'{b}<br/><b>{d}%</b> of allocated capacity'}, tipBase),
+    legend:{bottom:0, icon:'circle', itemWidth:8, itemHeight:8, itemGap:12, textStyle:{color:'#8b98b8', fontSize:10.5, fontFamily:'Inter'}},
+    graphic:[
+      {type:'text', left:'center', top:'35%', style:{text:'6', fontSize:25, fontWeight:700, fontFamily:'Space Grotesk', fill:'#eef3ff', textAlign:'center'}},
+      {type:'text', left:'center', top:'51%', style:{text:'SERVICES', fontSize:8.5, fontFamily:'JetBrains Mono', fill:'#5d6a90', textAlign:'center'}}
+    ],
+    series:[{type:'pie', radius:['54%','80%'], center:['50%','42%'], padAngle:2,
+      itemStyle:{borderRadius:9, borderColor:'#0f1730', borderWidth:3, shadowBlur:16, shadowColor:'rgba(0,0,0,.45)'},
+      emphasis:{scale:true, scaleSize:9},
+      label:{show:false},
+      color:['#22d3ee','#818cf8','#8b5cf6','#34d399','#fbbf24','#fb7185'],
+      data:[
+        {value:28,name:'api-gateway'},{value:22,name:'web-frontend'},{value:18,name:'ml-inference'},
+        {value:14,name:'payment-svc'},{value:12,name:'auth-service'},{value:6,name:'background-jobs'}
+      ]
+    }]
+  });
+  charts.push(donutChart);
+
+  /* engine gauge */
+  gaugeChart = echarts.init($('#chartGauge'), null, {renderer:'canvas'});
+  gaugeChart.setOption({
+    series:[{
+      type:'gauge', startAngle:215, endAngle:-35, min:0, max:100, radius:'102%', center:['50%','58%'],
+      progress:{show:true, width:13, roundCap:true, itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#22d3ee'},{offset:.55,color:'#6366f1'},{offset:1,color:'#8b5cf6'}])}},
+      axisLine:{roundCap:true, lineWidth:13, itemStyle:{color:[[1,'#1a2242']]}},
+      pointer:{length:'56%', width:5, itemStyle:{color:'#eaf2ff', shadowColor:'rgba(0,0,0,.5)', shadowBlur:6}},
+      anchor:{show:true, size:10, itemStyle:{color:'#22d3ee', borderColor:'#0b1120', borderWidth:2.5}},
+      axisTick:{length:5, distance:-25, splitNumber:5, lineStyle:{width:1, color:'rgba(200,220,255,.3)'}},
+      splitLine:{length:10, distance:-32, splitNumber:5, lineStyle:{width:2, color:'rgba(200,220,255,.45)'}},
+      axisLabel:{show:false},
+      title:{offsetCenter:[0,'80%'], fontSize:9, color:'#8794b8', fontFamily:'JetBrains Mono'},
+      detail:{offsetCenter:[0,'40%'], valueAnimation:true, fontSize:23, fontWeight:700, fontFamily:'Space Grotesk', color:'#eef3ff', formatter:'{value}%'},
+      data:[{value:62, name:'AVG CPU'}]
+    }]
+  });
+  charts.push(gaugeChart);
+}
+
+/* ============ SIMULATOR STATE ============ */
+const sim = {
+  load:34, target:34, cpu:34,
+  desired:4, minI:2, maxI:16, targetCpu:65,
+  cooldown:0, tick:0, peak:34, scaleCount:0,
+  predictive:true, paused:false, policyOn:true
+};
+let pods = [];
+const mkId = () => 'i-' + Math.random().toString(16).slice(2,8) + Math.random().toString(16).slice(2,6);
+for(let i=0;i<4;i++) pods.push({id:mkId(), seed:rand(.85,1.15), state:'running', age:99});
+
+const simHist = {labels:[], data:[]};
+for(let i=40;i>0;i--){ simHist.labels.push(''); simHist.data.push(+clamp(34 + rand(-3,3),5,95).toFixed(1)); }
+
+let simChart = null;
+function initSimChart(){
+  simChart = echarts.init($('#simChart'), null, {renderer:'canvas'});
+  simChart.setOption({
+    grid:{left:36, right:6, top:12, bottom:24},
+    tooltip:Object.assign({trigger:'axis', axisPointer:{type:'line', lineStyle:{color:'rgba(125,232,255,.4)'}}}, tipBase),
+    xAxis:Object.assign({type:'category', boundaryGap:false, data:simHist.labels.slice(), splitLine:{show:false}}, axisMuted),
+    yAxis:{type:'value', max:100, splitNumber:4, axisLabel:{color:'#66739c', fontFamily:'JetBrains Mono', fontSize:9.5, formatter:'{value}%'}, splitLine:{lineStyle:{type:'dashed', color:'rgba(130,160,220,.1)'}}},
+    series:[{
+      name:'Fleet CPU', type:'line', smooth:0.4, symbol:'none',
+      lineStyle:{width:2.4, color:'#38bdf8', shadowColor:'rgba(56,189,248,.55)', shadowBlur:11},
+      areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(56,189,248,.3)'},{offset:1,color:'rgba(56,189,248,0)'}])},
+      data:simHist.data.slice(),
+      markLine:{silent:true, symbol:'none', animation:false,
+        lineStyle:{type:'dashed', width:1.6, color:'#fbbf24'},
+        data:[{yAxis:sim.targetCpu}],
+        label:{formatter:'TARGET 65%', color:'#fbbf24', fontFamily:'JetBrains Mono', fontSize:9, position:'insideEndTop'}
+      }
+    }]
+  });
+  charts.push(simChart);
+}
+
+/* console log */
+const SIM_LOG = $('#simLog');
+function logLine(level, msg){
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = '<span class="log-time">'+timeNow()+'</span><span class="log-level lvl-'+level+'">'+level+'</span><span class="log-msg">'+esc(msg)+'</span>';
+  SIM_LOG.appendChild(line);
+  while(SIM_LOG.children.length > 90) SIM_LOG.removeChild(SIM_LOG.firstChild);
+  SIM_LOG.scrollTop = SIM_LOG.scrollHeight;
+}
+function seedLogs(){
+  const boot = [
+    ['SYSTEM','capacity sandbox initialized · cluster sbx-01 (us-east-1)'],
+    ['POLICY','target-tracking loaded · target cpu=65% · range 2–16'],
+    ['PREDICT','forecast service nominal · MAPE 5.4% · next peak 14:00'],
+    ['HEALTH','4/4 instances passing ALB health checks'],
+    ['INFO','awaiting traffic injection — use the controls on the left']
+  ];
+  boot.forEach(([l,m]) => logLine(l,m));
+}
+
+/* pods rendering */
+const POD_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="19" height="7" rx="2"/><rect x="2.5" y="14" width="19" height="7" rx="2"/><path d="M6.5 6.5h.01M6.5 17.5h.01"/></svg>';
+function renderPods(){
+  $('#podGrid').innerHTML = pods.map(p =>
+    '<div class="pod '+p.state+'" data-pod-id="'+p.id+'"><div class="pod-head">'+POD_SVG+'<span class="pod-status"></span></div><div class="pod-id mono">'+p.id.slice(0,12)+'</div><div class="pod-cpu mono">'+(p.state==='starting'?'···':Math.round(podCpu(p))+'%')+'</div><div class="pod-bar"><i style="width:'+(p.state==='starting'?8:podCpu(p))+'%"></i></div></div>'
+  ).join('');
+  $('#podCount').textContent = pods.filter(p => p.state !== 'stopping').length;
+}
+function podCpu(p){
+  if(p.state === 'starting') return 8;
+  if(p.state === 'stopping') return rand(4,14);
+  return clamp(sim.cpu * p.seed + Math.sin(sim.tick*0.9 + p.seed*20)*4, 3, 100);
+}
+function updatePodCpuReadouts(){
+  pods.forEach(p => {
+    const el = $('#podGrid [data-pod-id="'+p.id+'"]');
+    if(!el) return;
+    const v = podCpu(p);
+    const cpuEl = el.querySelector('.pod-cpu');
+    const barEl = el.querySelector('.pod-bar i');
+    if(cpuEl) cpuEl.textContent = p.state==='starting' ? '···' : Math.round(v)+'%';
+    if(barEl) barEl.style.width = v+'%';
+  });
+}
+function reconcilePods(){
+  let dirty = false;
+  const active = pods.filter(p => p.state !== 'stopping').length;
+  if(active < sim.desired){
+    pods.push({id:mkId(), seed:rand(.85,1.15), state:'starting', age:0});
+    dirty = true;
+  } else if(active > sim.desired){
+    const victim = pods.find(p => p.state === 'running');
+    if(victim){ victim.state = 'stopping'; victim.age = 0; dirty = true; }
+    else { const st = pods.find(p => p.state === 'starting'); if(st){ st.state='stopping'; st.age=0; dirty = true; } }
+  }
+  pods.forEach(p => {
+    p.age++;
+    if(p.state === 'starting' && p.age >= 2){ p.state = 'running'; dirty = true; logLine('HEALTH', p.id.slice(0,12)+' passed checks · registered with ALB'); }
+  });
+  const before = pods.length;
+  pods = pods.filter(p => !(p.state === 'stopping' && p.age >= 2));
+  if(pods.length !== before) dirty = true;
+  if(dirty) renderPods(); else updatePodCpuReadouts();
+}
+
+/* simulation tick */
+function simTick(){
+  sim.tick++;
+  sim.load = clamp(sim.load + (sim.target - sim.load)*0.085 + rand(-1.7,1.7), 2, 100);
+  sim.peak = Math.max(sim.peak, sim.load);
+  const capacity = pods.filter(p=>p.state!=='stopping').length * 11 || 11;
+  const rawCpu = clamp((sim.load / capacity) * 100, 4, 100);
+  sim.cpu = clamp(sim.cpu + (rawCpu - sim.cpu)*0.55 + rand(-1.3,1.3), 3, 100);
+
+  /* ---- autoscaling decisions ---- */
+  if(!sim.paused && sim.policyOn){
+    sim.cooldown = Math.max(0, sim.cooldown - 1);
+    const active = pods.filter(p=>p.state!=='stopping').length;
+    if(sim.cpu > sim.targetCpu && active < sim.maxI && sim.cooldown === 0){
+      const add = clamp(Math.ceil((sim.cpu - sim.targetCpu)/16), 1, 3);
+      sim.desired = Math.min(sim.maxI, sim.desired + add);
+      logLine('SCALE', 'OUT +'+add+' → desired '+sim.desired+' · cpu '+sim.cpu.toFixed(1)+'% > target '+sim.targetCpu+'%');
+      sim.scaleCount += add; sim.cooldown = 6;
+    } else if(sim.cpu < sim.targetCpu*0.45 && sim.desired > sim.minI && sim.cooldown === 0){
+      sim.desired = Math.max(sim.minI, sim.desired - 1);
+      logLine('SCALE', 'IN −1 → desired '+sim.desired+' · cpu '+sim.cpu.toFixed(1)+'% idle band');
+      sim.scaleCount += 1; sim.cooldown = 5;
+    } else if(sim.predictive && sim.target - sim.load > 22 && sim.desired < sim.maxI && sim.cooldown === 0 && Math.random() < 0.42){
+      sim.desired = Math.min(sim.maxI, sim.desired + 1);
+      logLine('PREDICT', 'forecast +'+Math.round(sim.target - sim.load)+' units rising · proactive +1 → '+sim.desired);
+      sim.scaleCount += 1; sim.cooldown = 7;
+    }
+  }
+
+  reconcilePods();
+
+  /* ---- UI updates ---- */
+  const cpuR = Math.round(sim.cpu);
+  const rtt  = Math.round(52 + Math.pow(sim.cpu/100, 2.1)*340 + rand(-4,4));
+  const rps  = Math.round(sim.load * 23.5);
+  $('#loadValue').textContent = Math.round(sim.load);
+  $('#simPeakReadout').textContent = Math.round(sim.peak)+'%';
+  $('#simCpu').innerHTML = cpuR+'<small>%</small>';
+  $('#simCpu').className = cpuR > sim.targetCpu ? 'warn' : '';
+  $('#simRtt').innerHTML = rtt+'<small>ms</small>';
+  $('#simRtt').className = rtt > 260 ? 'danger' : (rtt > 180 ? 'warn' : '');
+  $('#simRps').innerHTML = rps.toLocaleString()+'<small> rps</small>';
+  $('#simScaleCount').textContent = sim.scaleCount;
+  $('#simAvgCpuMini').textContent = cpuR+'%';
+
+  const cd = $('#simCooldown');
+  if(sim.cooldown > 0){ cd.textContent = 'COOLDOWN '+sim.cooldown+'s'; cd.classList.add('cooling'); }
+  else { cd.textContent = 'READY'; cd.classList.remove('cooling'); }
+
+  /* slider reflect (only when not dragging) */
+  const slider = $('#trafficSlider');
+  if(document.activeElement !== slider){ slider.value = Math.round(sim.load); paintSlider(slider); }
+
+  /* chart */
+  simHist.labels.push(''); simHist.data.push(+sim.cpu.toFixed(1));
+  if(simHist.labels.length > 40){ simHist.labels.shift(); simHist.data.shift(); }
+  if(simChart){
+    simChart.setOption({xAxis:{data:simHist.labels.slice()}, series:[{data:simHist.data.slice()}]});
+  }
+
+  /* ambient log lines */
+  if(sim.tick % 11 === 0){
+    const n = pods.filter(p=>p.state!=='stopping').length;
+    const ambient = [
+      ['HEALTH', n+'/'+n+' instances passing ELB checks · drain 0'],
+      ['POLICY', 'eval ok · cpu '+sim.cpu.toFixed(1)+'% within band · next in 15s'],
+      ['INFO',   'metrics flushed → prometheus · retention 400d']
+    ];
+    const pick = ambient[Math.floor(Math.random()*ambient.length)];
+    logLine(pick[0], pick[1]);
+  }
+}
+
+/* slider paint helper */
+function paintSlider(s){
+  const p = ((+s.value - +s.min) / (+s.max - +s.min)) * 100;
+  s.style.setProperty('--p', p+'%');
+}
+$$('.slider').forEach(paintSlider);
+
+/* traffic controls */
+$$('.scenario-btn').forEach(btn => btn.addEventListener('click', () => {
+  const raw = btn.dataset.scenario;
+  const val = raw === 'surge' ? Math.round(rand(60,95)) : +raw;
+  sim.target = val;
+  $('#trafficSlider').value = val; paintSlider($('#trafficSlider'));
+  $$('.scenario-btn').forEach(b => b.classList.toggle('active', b === btn));
+  const name = btn.querySelector('small') ? btn.firstChild.textContent.trim() : 'Scenario';
+  logLine('INFO', 'operator injected scenario "'+name+'" → target load '+val+'%');
+  toast('Scenario applied', 'Target load set to '+val+'% — watch the autoscaler respond.', 'info', 3200);
+}));
+$('#trafficSlider').addEventListener('input', e => {
+  sim.target = +e.target.value;
+  paintSlider(e.target);
+  $$('.scenario-btn').forEach(b => b.classList.remove('active'));
+  logLine('INFO', 'manual load dial → '+e.target.value+'%');
+});
+$('#btnResetSim').addEventListener('click', () => {
+  sim.load = 34; sim.target = 34; sim.cpu = 34; sim.desired = 4; sim.cooldown = 0; sim.peak = 34; sim.scaleCount = 0;
+  pods = []; for(let i=0;i<4;i++) pods.push({id:mkId(), seed:rand(.85,1.15), state:'running', age:99});
+  simHist.labels.length = 0; simHist.data.length = 0;
+  for(let i=40;i>0;i--){ simHist.labels.push(''); simHist.data.push(+clamp(34+rand(-3,3),5,95).toFixed(1)); }
+  renderPods();
+  if(simChart) simChart.setOption({xAxis:{data:simHist.labels.slice()}, series:[{data:simHist.data.slice()}]});
+  $('#trafficSlider').value = 34; paintSlider($('#trafficSlider'));
+  $$('.scenario-btn').forEach(b => b.classList.toggle('active', b.dataset.scenario === '32'));
+  SIM_LOG.innerHTML = '';
+  logLine('SYSTEM', 'simulation reset by operator · baseline restored (4 pods · 34% load)');
+  toast('Simulator reset', 'Baseline capacity restored.', 'info');
+});
+$('#clearSimLog').addEventListener('click', () => { SIM_LOG.innerHTML = ''; logLine('INFO', 'console cleared by operator'); });
+
+/* ============ FORECAST CHART ============ */
+function initForecastChart(){
+  const fc = echarts.init($('#forecastChart'), null, {renderer:'canvas'});
+  const now = Date.now();
+  const labels = [];
+  for(let h=-24; h<=24; h+=2){
+    const d = new Date(now + h*3600*1000);
+    labels.push(pad2(d.getHours())+':00');
+  }
+  const hist = [46,41,33,27,24,27,38,55,64,58,50,46,43];
+  const fcst = [43,48,57,69,78,81,72,61,52,46,42,39,37];
+  const lower= fcst.map(v => Math.max(5, v-9));
+  const delta= fcst.map(v => 18);
+  const histFull = hist.concat([null,null,null,null,null,null,null,null,null,null,null,null]);
+  const fcFull   = new Array(12).fill(null).concat(fcst);
+  const lowerFull= new Array(12).fill(null).concat(lower);
+  const deltaFull= new Array(12).fill(null).concat(delta);
+  const nowLabel = labels[12];
+  fc.setOption({
+    grid:{left:38, right:8, top:16, bottom:30},
+    tooltip:Object.assign({trigger:'axis'}, tipBase),
+    legend:{bottom:0, icon:'roundRect', itemWidth:13, itemHeight:5, data:['Historical','AI Forecast'], textStyle:{color:'#8794b8', fontSize:11}},
+    xAxis:Object.assign({type:'category', boundaryGap:false, data:labels, splitLine:{show:false}, axisLabel:{color:'#66739c', fontFamily:'JetBrains Mono', fontSize:9, interval:2}}, axisMuted),
+    yAxis:{type:'value', max:100, splitNumber:4, axisLabel:{color:'#66739c', fontFamily:'JetBrains Mono', fontSize:9.5, formatter:'{value}%'}, splitLine:{lineStyle:{type:'dashed', color:'rgba(130,160,220,.1)'}}},
+    series:[
+      {name:'band-lo', type:'line', stack:'band', symbol:'none', silent:true, lineStyle:{opacity:0}, areaStyle:{opacity:0}, emphasis:{disabled:true}, tooltip:{show:false}, data:lowerFull},
+      {name:'band', type:'line', stack:'band', symbol:'none', silent:true, lineStyle:{opacity:0}, areaStyle:{color:'rgba(139,92,246,.16)'}, emphasis:{disabled:true}, tooltip:{show:false}, data:deltaFull},
+      {name:'Historical', type:'line', smooth:0.45, symbol:'none', z:6,
+       lineStyle:{width:2.6, color:'#22d3ee', shadowColor:'rgba(34,211,238,.5)', shadowBlur:12},
+       areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(34,211,238,.3)'},{offset:1,color:'rgba(34,211,238,0)'}])},
+       markLine:{silent:true, symbol:'none', animation:false, lineStyle:{type:'dashed', color:'rgba(240,166,252,.65)', width:1.5}, data:[{xAxis:nowLabel}], label:{formatter:'NOW', color:'#f0a6fc', fontFamily:'JetBrains Mono', fontSize:9}},
+       data:histFull},
+      {name:'AI Forecast', type:'line', smooth:0.45, symbol:'circle', symbolSize:6, z:6,
+       lineStyle:{width:2.6, type:'dashed', color:'#a78bfa', shadowColor:'rgba(167,139,250,.5)', shadowBlur:12},
+       itemStyle:{color:'#c4b5fd', borderColor:'#0f1730', borderWidth:1.5},
+       data:fcFull}
+    ]
+  });
+  charts.push(fc);
+}
+
+/* ============ COST CHART ============ */
+function initCostChart(){
+  const cc = echarts.init($('#costChart'), null, {renderer:'canvas'});
+  const months = [];
+  const d = new Date();
+  for(let i=5;i>=0;i--){ const m = new Date(d.getFullYear(), d.getMonth()-i, 1); months.push(m.toLocaleString('en',{month:'short'})); }
+  const onDemand = [11240,11480,11890,12130,12460,12190];
+  const optimized= [9310,8940,8560,8110,7640,7214];
+  const savings  = onDemand.map((v,i) => +(((v-optimized[i])/v)*100).toFixed(1));
+  cc.setOption({
+    grid:{left:44, right:44, top:18, bottom:30},
+    tooltip:Object.assign({trigger:'axis', axisPointer:{type:'shadow', shadowStyle:{color:'rgba(125,232,255,.06)'}}}, tipBase),
+    legend:{bottom:0, icon:'roundRect', itemWidth:13, itemHeight:5, textStyle:{color:'#8794b8', fontSize:11}},
+    xAxis:Object.assign({type:'category', data:months, splitLine:{show:false}}, axisMuted),
+    yAxis:[
+      {type:'value', max:14000, splitNumber:4, axisLabel:{color:'#66739c', fontFamily:'JetBrains Mono', fontSize:9.5, formatter:v => '$'+(v/1000)+'k'}, splitLine:{lineStyle:{type:'dashed', color:'rgba(130,160,220,.1)'}}},
+      {type:'value', max:60, splitNumber:4, axisLabel:{color:'#66739c', fontFamily:'JetBrains Mono', fontSize:9.5, formatter:'{value}%'}, splitLine:{show:false}}
+    ],
+    series:[
+      {name:'On-Demand', type:'bar', data:onDemand, barWidth:17, itemStyle:{borderRadius:[6,6,0,0], color:'#28325c'}},
+      {name:'AutoScale Optimized', type:'bar', data:optimized, barWidth:17, itemStyle:{borderRadius:[6,6,0,0], color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#22d3ee'},{offset:1,color:'#0e7490'}]), shadowColor:'rgba(34,211,238,.4)', shadowBlur:12}},
+      {name:'Savings %', type:'line', yAxisIndex:1, smooth:0.45, symbol:'circle', symbolSize:7, z:6,
+       lineStyle:{width:2.4, color:'#fbbf24', shadowColor:'rgba(251,191,36,.45)', shadowBlur:10}, itemStyle:{color:'#fde68a', borderColor:'#0f1730', borderWidth:1.5}, data:savings}
+    ]
+  });
+  charts.push(cc);
+}
+
+/* ============ LAZY CHART INIT ============ */
+function ensurePageCharts(page){
+  if(page === 'overview' && !inited.overview){ initOverviewCharts(); inited.overview = 1; }
+  else if(page === 'simulator' && !inited.sim){ initSimChart(); inited.sim = 1; }
+  else if(page === 'predictions' && !inited.fc){ initForecastChart(); inited.fc = 1; }
+  else if(page === 'costs' && !inited.cost){ initCostChart(); inited.cost = 1; }
+  setTimeout(resizeAll, 70);
+}
+window.addEventListener('resize', resizeAll);
+
+/* ============ OVERVIEW LIVE LOOP ============ */
+let oTick = 44;
+setInterval(() => {
+  oTick++;
+  const wave = 58 + 15*Math.sin(oTick*0.31) + 6*Math.sin(oTick*0.12 + 2.1);
+  const cpu = clamp(wave + rand(-2.5,2.5), 24, 93);
+  const mem = clamp(cpu*0.72 + rand(9,15), 18, 95);
+  const rtt = Math.round(58 + Math.pow(cpu/100, 2.1)*310);
+  utilData.labels.push(timeNow()); utilData.cpu.push(+cpu.toFixed(1)); utilData.mem.push(+mem.toFixed(1));
+  if(utilData.labels.length > 44){ utilData.labels.shift(); utilData.cpu.shift(); utilData.mem.shift(); }
+  $('#kpiCpu').textContent = cpu.toFixed(1);
+  $('#kpiRtt').textContent = rtt;
+  if(utilChart) utilChart.setOption({xAxis:{data:utilData.labels.slice()}, series:[{data:utilData.cpu.slice()},{data:utilData.mem.slice()}]});
+  if(gaugeChart) gaugeChart.setOption({series:[{data:[{value:Math.round(cpu), name:'AVG CPU'}]}]});
+}, 2000);
+
+/* ============ INSTANCES TABLE ============ */
+const RATE = {'t3.large':0.0832, 'm5.xlarge':0.192, 'm5.2xlarge':0.384, 'c5.2xlarge':0.34, 'r5.xlarge':0.252};
+let instances = [
+  {id:'i-0a8f3c2e91b7d4f01', service:'api-gateway', type:'m5.xlarge', az:'us-east-1a', status:'running', cpu:78, mem:66, age:'14d'},
+  {id:'i-0b7e2d1f84c9a5e02', service:'api-gateway', type:'m5.xlarge', az:'us-east-1b', status:'running', cpu:74, mem:61, age:'14d'},
+  {id:'i-0c6d1e0a73b8f4c03', service:'api-gateway', type:'m5.xlarge', az:'us-east-1c', status:'running', cpu:81, mem:70, age:'9d'},
+  {id:'i-0d5f0e9f62a7d3b04', service:'ml-inference', type:'c5.2xlarge', az:'us-east-1a', status:'running', cpu:74, mem:71, age:'21d'},
+  {id:'i-0e4c9f8e51f6c2a05', service:'ml-inference', type:'c5.2xlarge', az:'us-east-1b', status:'running', cpu:68, mem:64, age:'21d'},
+  {id:'i-0f3b8e7d40e5b1c06', service:'web-frontend', type:'t3.large', az:'us-east-1b', status:'running', cpu:47, mem:39, age:'32d'},
+  {id:'i-104a7d6c3fd4a0d07', service:'web-frontend', type:'t3.large', az:'us-east-1c', status:'running', cpu:52, mem:44, age:'32d'},
+  {id:'i-115c6e5b2ec3f9e08', service:'payment-svc', type:'m5.xlarge', az:'us-east-1a', status:'running', cpu:63, mem:58, age:'18d'},
+  {id:'i-126d5f4a1db2e8f09', service:'payment-svc', type:'m5.xlarge', az:'us-east-1c', status:'running', cpu:59, mem:55, age:'18d'},
+  {id:'i-137e4a39c0c1d7f10', service:'auth-service', type:'t3.large', az:'us-east-1a', status:'running', cpu:31, mem:28, age:'45d'},
+  {id:'i-148f392b0fb0c6a11', service:'batch-workers', type:'r5.xlarge', az:'us-east-1b', status:'running', cpu:18, mem:47, age:'12d'},
+  {id:'i-159a283c91a1b5b12', service:'canary-node', type:'m5.2xlarge', az:'us-east-1a', status:'starting', cpu:0, mem:0, age:'2m'},
+  {id:'i-16ab174d8029a4c13', service:'spare', type:'t3.large', az:'us-east-1c', status:'standby', cpu:0, mem:0, age:'60d'}
+];
+let instanceFilter = 'all';
+
+function filteredInstances(){
+  const q = ($('#instanceSearch').value || '').trim().toLowerCase();
+  return instances.filter(i => {
+    if(instanceFilter !== 'all' && i.status !== instanceFilter) return false;
+    if(!q) return true;
+    return (i.id+' '+i.service+' '+i.type+' '+i.az).toLowerCase().includes(q);
+  });
+}
+function statusPill(s){ return '<span class="pill '+s+'">'+s+'</span>'; }
+function renderInstanceTable(){
+  const rows = filteredInstances();
+  $('#instanceTableBody').innerHTML = rows.length ? rows.map(i =>
+    '<tr><td><span class="inst-id">'+i.id.slice(0,17)+'</span></td>'+
+    '<td><span class="inst-service">'+esc(i.service)+'</span></td>'+
+    '<td class="mono" style="font-size:11px;color:#a7b6e3">'+i.type+'</td>'+
+    '<td class="mono" style="font-size:11px;color:#a7b6e3">'+i.az+'</td>'+
+    '<td><div class="cell-cpu"><span>'+(i.status==='running'?Math.round(i.cpu):0)+'%</span><div class="bar sm'+(i.cpu>75?' amber':'')+'"><i style="width:'+(i.status==='running'?i.cpu:2)+'%"></i></div></div></td>'+
+    '<td class="mono" style="font-size:11px;color:#a7b6e3">'+(i.status==='running'?Math.round(i.mem):0)+'%</td>'+
+    '<td>'+statusPill(i.status)+'</td><td class="mono" style="font-size:11px;color:var(--muted)">'+i.age+'</td>'+
+    '<td><button class="row-term" data-term="'+i.id+'" title="Terminate instance" aria-label="Terminate '+i.id.slice(0,13)+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M6 6l1.3 14.2A2 2 0 0 0 9.3 22h5.4a2 2 0 0 0 2-1.8L18 6"/></svg></button></td></tr>'
+  ).join('') : '<tr><td colspan="9" style="text-align:center;padding:38px;color:var(--muted-2)">No instances match this filter.</td></tr>';
+
+  const running = instances.filter(i=>i.status==='running');
+  const counts = {all:instances.length, running:running.length, starting:instances.filter(i=>i.status==='starting').length, standby:instances.filter(i=>i.status==='standby').length};
+  $$('#filterPills .filter-pill').forEach(p => {
+    const c = p.querySelector('.fp-count'); if(c) c.textContent = counts[p.dataset.filter] ?? 0;
+  });
+  $('#sumTotal').textContent = instances.length;
+  $('#sumRunning').textContent = running.length;
+  $('#sumAvgCpu').textContent = running.length ? Math.round(running.reduce((a,i)=>a+i.cpu,0)/running.length)+'%' : '—';
+  $('#sumCost').textContent = '$'+Math.round(instances.filter(i=>i.status!=='standby').reduce((a,i)=>a+(RATE[i.type]||0.19)*730,0)).toLocaleString();
+  $('#navInstanceCount').textContent = instances.length;
+  $('#kpiInstances').textContent = instances.length;
+}
+renderInstanceTable();
+
+/* fleet pressure jitter */
+setInterval(() => {
+  instances.forEach(i => {
+    if(i.status === 'running'){
+      i.cpu = clamp(i.cpu + rand(-5,5), 8, 96);
+      i.mem = clamp(i.mem + rand(-3,3), 10, 94);
+    } else if(i.status === 'starting'){
+      i.cpu = clamp(i.cpu + rand(2,9), 0, 34);
+    }
+  });
+  renderInstanceTable();
+}, 3000);
+
+$('#filterPills').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-pill'); if(!btn) return;
+  instanceFilter = btn.dataset.filter;
+  $$('#filterPills .filter-pill').forEach(p => p.classList.toggle('active', p === btn));
+  renderInstanceTable();
+});
+$('#instanceSearch').addEventListener('input', renderInstanceTable);
+$('#instanceTableBody').addEventListener('click', e => {
+  const btn = e.target.closest('[data-term]'); if(!btn) return;
+  const inst = instances.find(i => i.id === btn.dataset.term); if(!inst) return;
+  inst.status = 'stopping';
+  renderInstanceTable();
+  toast('Terminating instance', inst.id.slice(0,17)+' draining connections · removal in ~3s', 'warning');
+  setTimeout(() => {
+    instances = instances.filter(i => i.id !== inst.id);
+    renderInstanceTable();
+    toast('Instance terminated', inst.id.slice(0,17)+' removed from the fleet', 'success');
+  }, 2500);
+});
+
+/* global search → instances page */
+$('#globalSearch').addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+  const q = e.target.value.trim(); if(!q) return;
+  $('#instanceSearch').value = q;
+  instanceFilter = 'all';
+  $$('#filterPills .filter-pill').forEach(p => p.classList.toggle('active', p.dataset.filter === 'all'));
+  switchPage('instances');
+  renderInstanceTable();
+  toast('Fleet search', 'Filtered instances for “'+q+'”', 'info', 3000);
+});
+window.addEventListener('keydown', e => {
+  if((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')){ e.preventDefault(); $('#globalSearch').focus(); }
+});
+
+/* launch modal */
+function openLaunchModal(){ $('#launchModal').classList.add('open'); setTimeout(() => $('#launchService').focus(), 120); }
+function closeLaunchModal(){ $('#launchModal').classList.remove('open'); }
+$('#launchInstanceBtn').addEventListener('click', openLaunchModal);
+$('#headLaunchBtn').addEventListener('click', openLaunchModal);
+$('#closeLaunchModal').addEventListener('click', closeLaunchModal);
+$('#cancelLaunch').addEventListener('click', closeLaunchModal);
+$('#launchModal').addEventListener('click', e => { if(e.target.id === 'launchModal') closeLaunchModal(); });
+$('#launchForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const svc = $('#launchService').value.trim() || 'unnamed-svc';
+  const typeRaw = $('#launchType').value.split(' ')[0];
+  const newInst = {id:mkId(), service:svc, type:typeRaw, az:$('#launchAz').value, status:'starting', cpu:0, mem:0, age:'now'};
+  instances.unshift(newInst);
+  closeLaunchModal();
+  $('#launchForm').reset();
+  instanceFilter = 'all';
+  $$('#filterPills .filter-pill').forEach(p => p.classList.toggle('active', p.dataset.filter === 'all'));
+  renderInstanceTable();
+  toast('Instance launching', newInst.id.slice(0,17)+' · '+typeRaw+' in '+newInst.az, 'info');
+  setTimeout(() => {
+    const t = instances.find(i => i.id === newInst.id);
+    if(t && t.status === 'starting'){ t.status = 'running'; t.cpu = rand(28,55); t.mem = rand(30,52); t.age = '1m'; renderInstanceTable(); toast('Instance healthy', newInst.id.slice(0,17)+' registered with the load balancer', 'success'); }
+  }, 4500);
+});
+
+/* ============ POLICY SLIDERS → SIM ============ */
+const targetCpuSlider = $('#targetCpuSlider');
+targetCpuSlider.addEventListener('input', e => {
+  sim.targetCpu = +e.target.value;
+  $('#targetCpuVal').textContent = sim.targetCpu+'%';
+  $('#simTargetReadout').textContent = sim.targetCpu+'%';
+  $('#engineTarget').textContent = sim.targetCpu+'%';
+  $('#simChartNote').textContent = 'Target tracking · scaling out above '+sim.targetCpu+'%';
+  paintSlider(e.target);
+  if(simChart){
+    simChart.setOption({series:[{markLine:{data:[{yAxis:sim.targetCpu}], label:{formatter:'TARGET '+sim.targetCpu+'%'}}}]});
+  }
+});
+$('#minCapSlider').addEventListener('input', e => {
+  const v = +e.target.value;
+  sim.minI = v;
+  if(sim.desired < v) sim.desired = v;
+  $('#minCapVal').textContent = v+' pod'+(v>1?'s':'');
+  $('#simBoundsReadout').textContent = v+' – '+sim.maxI+' pods';
+  $('#engineCapacity').textContent = v+' – '+sim.maxI+' pods';
+  paintSlider(e.target);
+});
+$('#maxCapSlider').addEventListener('input', e => {
+  const v = +e.target.value;
+  sim.maxI = v;
+  if(sim.desired > v){ sim.desired = v; logLine('POLICY', 'capacity ceiling lowered → desired clamped to '+v); }
+  $('#maxCapVal').textContent = v+' pods';
+  $('#simBoundsReadout').textContent = sim.minI+' – '+v+' pods';
+  $('#engineCapacity').textContent = sim.minI+' – '+v+' pods';
+  paintSlider(e.target);
+});
+$('#cooldownSlider').addEventListener('input', e => {
+  $('#cooldownVal').textContent = e.target.value+'s';
+  paintSlider(e.target);
+});
+$('#confSlider').addEventListener('input', e => {
+  $('#confVal').textContent = e.target.value+'%';
+  paintSlider(e.target);
+});
+
+/* policy toggles */
+$('#policyToggleMain').addEventListener('change', e => {
+  sim.policyOn = e.target.checked;
+  $('#policyCardMain').classList.toggle('policy-disabled', !e.target.checked);
+  logLine('POLICY', 'target-tracking '+(e.target.checked?'ENABLED · reactive control restored':'DISABLED · manual capacity only'));
+  toast(e.target.checked ? 'Target tracking enabled' : 'Target tracking disabled', e.target.checked ? 'Engine will react to CPU pressure.' : 'Sandbox fleet will hold current capacity.', e.target.checked ? 'success' : 'warning');
+});
+function setPredictive(on, source){
+  sim.predictive = on;
+  $('#predictiveToggleMain').checked = on;
+  $('#policyTogglePredictive').checked = on;
+  $('#simPredictiveReadout').textContent = on ? 'ON' : 'OFF';
+  $('#policyCardPredictive').classList.toggle('policy-disabled', !on);
+  if(source !== 'init'){
+    logLine('PREDICT', 'predictive pre-scaling '+(on?'ENABLED':'DISABLED'));
+    toast('Predictive scaling '+(on?'enabled':'disabled'), on ? 'Forecast-driven pre-warming is active.' : 'Engine will now scale purely reactively.', on ? 'success' : 'info');
+  }
+}
+$('#predictiveToggleMain').addEventListener('change', e => setPredictive(e.target.checked));
+$('#policyTogglePredictive').addEventListener('change', e => setPredictive(e.target.checked));
+$('#policyToggleScheduled').addEventListener('change', e => {
+  $('#policyCardScheduled').classList.toggle('policy-disabled', !e.target.checked);
+  toast('Scheduled policy '+(e.target.checked?'enabled':'disabled'), e.target.checked ? 'Nightly minimum-capacity guardrails armed (02:00 UTC).' : 'Cron-based scaling disarmed.', 'info');
+});
+$('#policyToggleStep').addEventListener('change', e => {
+  $('#policyCardStep').classList.toggle('policy-disabled', !e.target.checked);
+  toast('Step scaling '+(e.target.checked?'enabled':'disabled'), e.target.checked ? 'Legacy step policy reactivated as fallback.' : 'Legacy step policy parked.', e.target.checked ? 'warning' : 'info');
+});
+
+/* ============ RETRAIN MODEL ============ */
+let retraining = false;
+$('#retrainBtn').addEventListener('click', function(){
+  if(retraining) return;
+  retraining = true;
+  const original = this.innerHTML;
+  this.disabled = true;
+  this.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:blink .7s infinite"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Retraining…';
+  setTimeout(() => {
+    $('#modelAccuracy').textContent = '94.9%';
+    $('#modelMape').textContent = '5.1%';
+    $('#modelTrained').textContent = 'just now · 14d window';
+    this.disabled = false;
+    this.innerHTML = original;
+    retraining = false;
+    toast('Model retrained', 'Prophet-LSTM v2.4.1 · MAPE improved 5.4% → 5.1% across rolling validation.', 'success');
+  }, 2600);
+});
+
+/* ============ COST PAGE ============ */
+let appliedTotal = 0;
+$$('.apply-rec').forEach(btn => btn.addEventListener('click', () => {
+  if(btn.classList.contains('applied')) return;
+  const save = +btn.dataset.savings || 0;
+  appliedTotal += save;
+  $('#appliedSavings').textContent = '$'+appliedTotal+'/mo';
+  btn.classList.add('applied');
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Applied';
+  toast('Recommendation applied', 'Estimated $'+save+'/mo added to projected annual savings.', 'success');
+}));
+$('#exportCostCsvBtn').addEventListener('click', () => {
+  const rows = [['month','on_demand_usd','optimized_usd','savings_pct'],['Apr',11240,9310,17.2],['May',11480,8940,22.1],['Jun',11890,8560,28.0],['Jul',12130,8110,33.1],['Aug',12460,7640,38.7],['Sep',12190,7214,40.8]];
+  downloadCsv(rows, 'autoscale-cost-report.csv');
+  toast('Export complete', 'Cost report CSV downloaded.', 'success');
+});
+
+/* ============ SETTINGS ============ */
+$('#saveProfileBtn').addEventListener('click', () => toast('Profile saved', 'Workspace preferences updated for alex.kumar@yourcompany.io.', 'success'));
+$$('.js-notify').forEach(t => t.addEventListener('change', () => {
+  toast(t.dataset.label + (t.checked ? ' enabled' : ' muted'), t.checked ? 'You will receive these notifications.' : 'Notifications silenced for this channel.', 'info', 2800);
+}));
+$('#webhookTestBtn').addEventListener('click', function(){
+  const original = this.textContent;
+  this.disabled = true; this.textContent = 'Testing…';
+  setTimeout(() => { this.disabled = false; this.textContent = original; toast('Webhook delivered', 'POST 200 OK · 142ms · payload acknowledged by receiver.', 'success'); }, 1100);
+});
+const FULL_KEY = 'ask_live_9f3kLm2Qp8VbN4xR7wZ1cD0eF5gH6jK3aB';
+const MASK_KEY = 'ask_live_••••••••••••••••••••••••••••••••';
+let keyRevealed = false;
+$('#revealKeyBtn').addEventListener('click', () => { keyRevealed = !keyRevealed; $('#apiKeyField').textContent = keyRevealed ? FULL_KEY : MASK_KEY; });
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch(e){
+    const ta = document.createElement('textarea'); ta.value = t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch(_){}
+    ta.remove(); return ok;
+  }
+}
+$('#copyKeyBtn').addEventListener('click', async () => {
+  const ok = await copyText(FULL_KEY);
+  toast(ok ? 'API key copied' : 'Copy failed', ok ? 'Key copied to clipboard. Store it somewhere safe.' : 'Clipboard access denied by the browser.', ok ? 'success' : 'error');
+});
+function downloadCsv(rows, filename){
+  const csv = rows.map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+$('#exportAuditBtn').addEventListener('click', () => {
+  const rows = [['timestamp_utc','resource','action','reason','initiated_by']];
+  events.forEach(e => rows.push([new Date().toISOString(), e.text.split(' ')[0], e.type.toUpperCase(), e.reason, 'autoscale-engine']));
+  rows.push([new Date().toISOString(), 'api-gateway', 'SCALE_OUT', 'cpu 78% > target 65%', 'target-tracking']);
+  rows.push([new Date().toISOString(), 'batch-workers', 'SCALE_IN', 'cpu 19% · scale-in band', 'target-tracking']);
+  rows.push([new Date().toISOString(), 'ml-inference', 'PRE_WARM', 'forecast confidence 93%', 'predictive-policy']);
+  downloadCsv(rows, 'autoscale-audit-log.csv');
+  toast('Audit log exported', rows.length-1+' records written to autoscale-audit-log.csv', 'success');
+});
+let globalPaused = false;
+$('#dangerPauseBtn').addEventListener('click', () => {
+  globalPaused = !globalPaused;
+  sim.paused = globalPaused;
+  $('#dangerPauseLabel').textContent = globalPaused ? 'Resume Auto-Scaling' : 'Pause Auto-Scaling';
+  $('#engineState').textContent = globalPaused ? 'Auto-Scaling PAUSED' : 'Auto-Scale Engine Online';
+  $('#engineDot').classList.toggle('amber', globalPaused);
+  $('#engineTopRow').classList.toggle('paused', globalPaused);
+  const pill = $('#enginePill');
+  pill.textContent = globalPaused ? 'PAUSED' : 'OPERATIONAL';
+  pill.classList.toggle('paused', globalPaused);
+  pill.classList.toggle('ok', !globalPaused);
+  if(inited.simulator || inited.sim){ logLine('SYSTEM', globalPaused ? 'ALL POLICIES FROZEN by operator · observe-only mode' : 'auto-scaling resumed · policies re-armed'); }
+  toast(globalPaused ? 'Auto-scaling paused' : 'Auto-scaling resumed', globalPaused ? 'Engine will observe and alert but never scale capacity.' : 'All scaling policies re-armed and evaluating.', globalPaused ? 'warning' : 'success');
+});
+
+/* ============ INIT SEQUENCE ============ */
+ensurePageCharts('overview');
+renderPods();
+seedLogs();
+setInterval(simTick, 1000);
+
+/* KPI savings count-up on load */
+(function countUpSavings(){
+  const el = $('#kpiSavings'); const target = 4821; const dur = 1500; const start = performance.now();
+  function frame(t){
+    const p = clamp((t - start)/dur, 0, 1);
+    const ease = 1 - Math.pow(2, -9*p);
+    el.textContent = Math.round(target * (p === 1 ? 1 : ease)).toLocaleString();
+    if(p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* welcome toast */
+setTimeout(() => {
+  toast('Welcome back, Alex', 'Predictive window: +3 pods pre-warm at 13:40 for the 14:00 peak (93% confidence).', 'info', 6000);
+}, 1400);
+</script>
+</body>
+</html>
